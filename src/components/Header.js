@@ -1,23 +1,41 @@
-import React, { useContext } from "react";
-import { BsChevronDown } from "react-icons/bs";
+import React, { useContext, useState } from "react";
+import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import UserContext from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const { user } = useContext(UserContext);
+  const [visibility, setVisibility] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+
+  const navigate = useNavigate();
+
+  function logout() {
+    navigate("/");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  }
+
   return (
     <Container>
       <p>linkr</p>
       <SearchBar />
       <section>
         <IconContext.Provider value={{ className: "react-icons" }}>
-          <button>
-            <BsChevronDown />
+          <button onClick={() => setVisibility(!visibility)}>
+            {!visibility ? <BsChevronDown /> : <BsChevronUp />}
           </button>
         </IconContext.Provider>
-        <img src={user.pictureURL} alt="profile-pic" />
+        <img
+          onClick={() => setVisibility(!visibility)}
+          src={user.pictureURL}
+          alt="profile-pic"
+        />
+        <Logout onClick={() => logout()} visibility={visibility.toString()}>
+          <p>Logout</p>
+        </Logout>
       </section>
     </Container>
   );
@@ -74,4 +92,27 @@ const Container = styled.div`
       border-radius: 50%;
     }
   }
+`;
+
+const Logout = styled.div`
+    z-index: 1;
+    position: absolute;
+    top: 59px;
+    right: 2px;
+    width: 150px;
+    height: 47px;
+    background-color: #171717;
+    border-radius: 0 0 0 20px;
+    display: ${(props) => (props.visibility === "false" ? "none" : "inline")};
+
+    p {
+      font-family: "Lato";
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 20px;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      padding: 13px 0px;
+      text-align: center;
+    }
 `;

@@ -20,6 +20,14 @@ export const editPost = async (postId, formData, token) => {
   });
 };
 
+export const deletePost = async (postId, token) => {
+  await api.delete(`/posts/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const getAllPosts = async (token) => {
   return api.get("/posts", {
     headers: {

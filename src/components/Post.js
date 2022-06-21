@@ -2,19 +2,21 @@ import { Link } from "react-router-dom";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect , useRef} from "react";
 import ReactTooltip from "react-tooltip";
 import { dislikePost, editPost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
-
+import DeleteModal from "./DeleteModal";
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
+  const inputRef=useRef()
   const [like, setLike] = useState(false);
   const [countLikes, setCountLikes] = useState(post.countLikes);
   const [tooltip, setTooltip] = useState(post.countLikes);
   const [editing,setEditing]=useState(false)
+  const [deleting,setDeleting]=useState(false)
   const [input,setInput]=useState(post.description)
   const [descriptionList,setDescriptionList]=useState([])
   const owner=user.id===post.userId
@@ -46,20 +48,33 @@ export default function Post({ post }) {
   }
   function defineDescriptionList(frase){
     const newList = [];
-  const oldList = frase.split(" ");
-  for (let k = 0; k < oldList.length; k++) {
-    newList.push(oldList[k]);
-    if (k !== oldList.length - 1) {
-      newList.push(" ");
+    const oldList = frase.split(" ");
+    for (let k = 0; k < oldList.length; k++) {
+      newList.push(oldList[k]);
+      if (k !== oldList.length - 1) {
+        newList.push(" ");
+      }
     }
+    setDescriptionList(newList)
   }
-  setDescriptionList(newList)
+  
+  function editButton(){
+    if(editing){
+      const promise= editPost(post.postId,{description:input},token)
+      promise.then(()=>defineDescriptionList(input))
+    }
+    setEditing(!editing)
+    
   }
 
   useEffect(()=>{
     defineDescriptionList(post.description)
+    
   },[])
   
+  useEffect(()=>{
+    if(editing)inputRef.current.focus()
+  },[editing])
   // useEffect(() => {
   //   getTooltip();
   // }, []);
@@ -114,6 +129,7 @@ export default function Post({ post }) {
 
   return (
     <PostContainer key={post.postId}>
+      {deleting?<DeleteModal postId={post.postId} setDeleting={setDeleting} />:<></>}
       <IconContext.Provider value={{ className: "react-icons" }}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
@@ -151,19 +167,26 @@ export default function Post({ post }) {
           <Link to={`/user/${post.userId}`}>
             <p className="username">{post.username}</p>
           </Link>
-          {owner?<button onClick={()=>{
-            if(editing){
-              const promise=await editPost(post.postId,{description:input},token)
-              promise.then(()=>defineDescriptionList(input))
-            }
-            setEditing(!editing)}}>
-            editar
-          </button>:<></>}
+          <span>
+            {owner?
+              <button onClick={editButton}>
+                editar
+              </button>
+            :<></>}
+            {owner?
+              <button onClick={()=>setDeleting(true)}>
+                apagar
+              </button>
+            :<></>}
+          </span>
+          
         </FirstLine>
+        <input ref={inputRef} className={editing?'normal':'invisible'} value={input} onChange={e=>setInput(e.target.value)}></input>
         {editing?
-        <input value={input} onChange={e=>setInput(e.target.value)}></input>
+          <></>
         :
-        <p className="description">{descriptionList.map(readHashtags)}</p>}
+          <p className="description">{descriptionList.map(readHashtags)}</p>
+        }
         <SnippetContainer
           onClick={() => window.open(post.url, "_blank").focus()}
         >
@@ -265,6 +288,7 @@ const ContentContainer = styled.div`
     border-radius:10px;
     margin-bottom:12px;
   }
+  .invisible{display:none}
 `;
 
 const SnippetContainer = styled.div`

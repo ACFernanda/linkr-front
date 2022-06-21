@@ -16,7 +16,6 @@ export default function Trending() {
   useEffect(() => {
     (async () => {
       const response = await getTrandings(token);
-      console.log(response);
       setTrendingList(response.data);
     })();
   }, []);

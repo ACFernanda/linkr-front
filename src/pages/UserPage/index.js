@@ -64,15 +64,38 @@ const UserPosts = ({ token, user }) => {
   const title = `${formatUserName(userData.name)} posts`;
 
   function toggleFollow() {
+    const promise = getUserPosts(userId, token);
+    promise.then((res) => {
+      setUserData(res.data);
+      setFollow(res.data.follow);
+    });
+    promise.catch((e) => {
+      console.log(e);
+      alert(
+        "An error occured while trying to fetch the user's posts, please refresh the page."
+      );
+    });
+
     if (follow === true) {
-      unfollowUser({ unfollowUserId: userId }, token);
+      const promise = unfollowUser({ unfollowUserId: userId }, token);
+      promise.then((res) => {
+        setFollow(!follow);
+      });
+      promise.catch((e) => {
+        console.log(e);
+        alert("Ops! Não foi possível executar a operação.");
+      });
     }
-
     if (follow === false) {
-      followUser({ followUserId: userId }, token);
+      const promise = followUser({ followUserId: userId }, token);
+      promise.then((res) => {
+        setFollow(!follow);
+      });
+      promise.catch((e) => {
+        console.log(e);
+        alert("Ops! Não foi possível executar a operação.");
+      });
     }
-
-    setFollow(!follow);
   }
 
   if (!userData.posts.length) {

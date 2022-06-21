@@ -4,18 +4,20 @@ import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect } from "react";
 import ReactTooltip from "react-tooltip";
-import { dislikePost, likePost } from "../services/api";
+import { dislikePost, editPost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
 
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
-
   const [like, setLike] = useState(false);
   const [countLikes, setCountLikes] = useState(post.countLikes);
   const [tooltip, setTooltip] = useState(post.countLikes);
-
+  const [editing,setEditing]=useState(false)
+  const [input,setInput]=useState(post.description)
+  const [descriptionList,setDescriptionList]=useState([])
+  const owner=user.id===post.userId
   // useEffect(() => {
   //   let userLiked;
   //   if (post.likes.length) {
@@ -42,15 +44,22 @@ export default function Post({ post }) {
       return <span>{word}</span>;
     }
   }
-
-  const newList = [];
-  const oldList = post.description.split(" ");
+  function defineDescriptionList(frase){
+    const newList = [];
+  const oldList = frase.split(" ");
   for (let k = 0; k < oldList.length; k++) {
     newList.push(oldList[k]);
     if (k !== oldList.length - 1) {
       newList.push(" ");
     }
   }
+  setDescriptionList(newList)
+  }
+
+  useEffect(()=>{
+    defineDescriptionList(post.description)
+  },[])
+  
   // useEffect(() => {
   //   getTooltip();
   // }, []);
@@ -105,9 +114,10 @@ export default function Post({ post }) {
 
   return (
     <PostContainer key={post.postId}>
+      <IconContext.Provider value={{ className: "react-icons" }}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
-        <IconContext.Provider value={{ className: "react-icons" }}>
+        
           <button
             onClick={() => {
               // getTooltip();
@@ -128,7 +138,7 @@ export default function Post({ post }) {
               <AiFillHeart style={{ color: "#AC0000" }} />
             )}
           </button>
-        </IconContext.Provider>
+        
         <ReactTooltip place="bottom" type="light" effect="solid" />
         {countLikes === 1 ? (
           <p data-tip={tooltip}>{countLikes} like</p>
@@ -137,10 +147,23 @@ export default function Post({ post }) {
         )}
       </PictureContainer>
       <ContentContainer>
-        <Link to={`/user/${post.userId}`}>
-          <p className="username">{post.username}</p>
-        </Link>
-        <p className="description">{newList.map(readHashtags)}</p>
+        <FirstLine>
+          <Link to={`/user/${post.userId}`}>
+            <p className="username">{post.username}</p>
+          </Link>
+          {owner?<button onClick={()=>{
+            if(editing){
+              const promise=await editPost(post.postId,{description:input},token)
+              promise.then(()=>defineDescriptionList(input))
+            }
+            setEditing(!editing)}}>
+            editar
+          </button>:<></>}
+        </FirstLine>
+        {editing?
+        <input value={input} onChange={e=>setInput(e.target.value)}></input>
+        :
+        <p className="description">{descriptionList.map(readHashtags)}</p>}
         <SnippetContainer
           onClick={() => window.open(post.url, "_blank").focus()}
         >
@@ -159,9 +182,14 @@ export default function Post({ post }) {
           <ImageContainer urlImage={post.urlImage}></ImageContainer>
         </SnippetContainer>
       </ContentContainer>
+      </IconContext.Provider>
     </PostContainer>
   );
 }
+const FirstLine=styled.div`
+width:100%;
+display:flex;justify-content:space-between;
+`
 
 const PostContainer = styled.div`
   padding: 12px;
@@ -228,6 +256,14 @@ const ContentContainer = styled.div`
   }
   .hashtag {
     font-weight: 900;
+  }
+  input{
+    padding-left:9px;
+    border:0;
+    width: 100%;
+    height: 44px;
+    border-radius:10px;
+    margin-bottom:12px;
   }
 `;
 

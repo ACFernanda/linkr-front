@@ -115,5 +115,4 @@ const Logout = styled.div`
       padding: 13px 0px;
       text-align: center;
     }
-  }
 `;

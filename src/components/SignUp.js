@@ -130,28 +130,25 @@ export default function SignIn() {
   );
 }
 
-const RightSide = styled.section`
-  & {
-    display: flex;
-    height: 100vh;
-    width: 40vw;
-    right: 0;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #333333;
-  }
+const RightSide = styled.div`
+  display: flex;
+  height: 100vh;
+  width: 40vw;
+  right: 0;
+  top: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #333333;
 
   form {
     display: flex;
     flex-direction: column;
     margin: 0 auto 22px auto;
+    width: 90%;
   }
 
   input {
-    width: 429px;
     height: 65px;
     background: #ffffff;
     border-radius: 6px;
@@ -162,7 +159,7 @@ const RightSide = styled.section`
     font-size: 25px;
     line-height: 40px;
     color: #000000;
-    margin: 0 auto 13px auto;
+    margin: 0 0 13px 0;
     padding-left: 17px;
 
     ::placeholder {
@@ -171,7 +168,6 @@ const RightSide = styled.section`
   }
 
   button {
-    width: 429px;
     height: 65px;
     background: #1877f2;
     border-radius: 6px;
@@ -200,5 +196,11 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  @media (max-width: 613px) {
+    width: 100vw;
+    justify-content: start;
+    margin-top: 16%;
   }
 `;

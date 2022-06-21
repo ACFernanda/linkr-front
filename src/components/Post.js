@@ -63,9 +63,11 @@ export default function Post({ post }) {
   const eventHandler=async(e)=>{
     if(e.key== "Enter"){
       console.log('input após o enter:',input)
-      await editPost(post.postId,{description:input},token)
-      defineDescriptionList(input)
-      setEditing(false)
+      try{
+        await editPost(post.postId,{description:input},token)
+        defineDescriptionList(input)
+        setEditing(false)
+      }catch(e){console.log(e)}
     }
     if(e.key== "Escape"){setEditing(false)}
   }

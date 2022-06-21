@@ -25,7 +25,7 @@ export default function SignIn() {
         email: formData.email,
         password: formData.password,
       };
-      const response = await api.post("sign-in", body);
+      const response = await api.post("/sign-in", body);
       handleSuccess(response);
     } catch (error) {
       console.log(error);
@@ -122,6 +122,10 @@ const RightSide = styled.section`
     justify-content: center;
     align-items: center;
     background-color: #333333;
+    @media (max-width: 613px) {
+      height: calc(100vh - 175px);
+      width: 100vw;
+    }
   }
   form {
     display: flex;
@@ -145,6 +149,13 @@ const RightSide = styled.section`
     ::placeholder {
       color: #9f9f9f;
     }
+    :disabled{
+      background-color: lightgray;
+    }
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
   button {
     width: 429px;
@@ -161,6 +172,13 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+    :disabled {
+      background-color: lightgray;
+    }
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
   h3 {
     width: 262px;
@@ -172,5 +190,12 @@ const RightSide = styled.section`
     line-height: 24px;
     text-decoration-line: underline;
     color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 613px) {
+      font-size: 17px;
+      line-height: 20px;
+    }
   }
 `;

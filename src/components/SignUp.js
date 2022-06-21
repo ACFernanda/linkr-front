@@ -227,10 +227,9 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  @media (max-width: 613px) {
-    font-size: 17px;
-    line-height: 20px;
+    @media (max-width: 613px) {
+      font-size: 17px;
+      line-height: 20px;
+    }
   }
 `;

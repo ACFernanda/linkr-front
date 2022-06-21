@@ -95,24 +95,24 @@ const Container = styled.div`
 `;
 
 const Logout = styled.div`
-    z-index: 1;
-    position: absolute;
-    top: 59px;
-    right: 2px;
-    width: 150px;
-    height: 47px;
-    background-color: #171717;
-    border-radius: 0 0 0 20px;
-    display: ${(props) => (props.visibility === "false" ? "none" : "inline")};
+  z-index: 1;
+  position: absolute;
+  top: 59px;
+  right: 2px;
+  width: 150px;
+  height: 47px;
+  background-color: #171717;
+  border-radius: 0 0 0 20px;
+  display: ${(props) => (props.visibility === "false" ? "none" : "inline")};
 
-    p {
-      font-family: "Lato";
-      font-weight: 700;
-      font-size: 17px;
-      line-height: 20px;
-      letter-spacing: 0.05em;
-      color: #ffffff;
-      padding: 13px 0px;
-      text-align: center;
-    }
+  p {
+    font-family: "Lato";
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 20px;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    padding: 13px 0px;
+    text-align: center;
+  }
 `;

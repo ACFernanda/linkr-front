@@ -26,40 +26,54 @@ export default function HashtagPage() {
     <>
       <Header />
       <Container>
-        <Main>
-          <h2># {word}</h2>
-          <div className="pageOrganizer">
-            <section>
-              {posts.map((post) => (
-                <Post post={post} />
-              ))}
-            </section>
-          </div>
-        </Main>
-        <Trending />
+        <h2># {word}</h2>
+        <section>
+          <Main>
+            {posts.map((post) => (
+              <Post post={post} />
+            ))}
+          </Main>
+          <Trending />
+        </section>
       </Container>
     </>
   );
 }
 
 const Container = styled.div`
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  width: 100%;
+  flex-direction: column;
+  width: 60%;
   background-color: #333333;
   padding-top: 3%;
 
-  @media (max-width: 613px) {
-    margin-top: 60px;
+  h2 {
+    font-family: "Oswald";
+    font-weight: 700;
+    font-size: 38px;
+    color: #ffffff;
+    margin-bottom: 40px;
   }
+
+  section {
+    display: flex;
+    flex-direction: row;
+  }
+
+  @media (max-width: 613px) {
+    width: 100%;
+    padding-top: 20%;
+
+    h2 {
+      margin-bottom: 20px;
+    }
 `;
 
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
-  .pageOrganizer {
-    display: flex;
-  }
+
   h2 {
     font-family: "Oswald";
     font-weight: 700;

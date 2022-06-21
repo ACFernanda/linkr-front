@@ -3,27 +3,31 @@ import { useParams } from "react-router-dom";
 
 import Header from "../../components/Header";
 import Post from "../../components/Post";
+import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
+import UserContext from "../../contexts/UserContext";
 import { getUserPosts } from "../../services/api";
 import { Main, Container, Message } from "./style";
 
 export default function UserPage() {
   const { token } = useContext(TokenContext);
+  const { user } = useContext(UserContext);
   return (
     <>
       <Header />
       <Container>
         <Main>
-          <UserPosts token={token} />
+          <UserPosts token={token} user={user} />
         </Main>
       </Container>
     </>
   );
 }
 
-const UserPosts = ({ token }) => {
+const UserPosts = ({ token, user }) => {
   const [userData, setUserData] = useState(null);
   const { id: userId } = useParams();
+  console.log(userId, user.id);
 
   useEffect(() => {
     const promise = getUserPosts(userId, token);
@@ -57,9 +61,17 @@ const UserPosts = ({ token }) => {
   if (!userData.posts.length) {
     return (
       <>
-        <h2>{title}</h2>
+        <div className="name-container">
+          <h2>{title}</h2>
+          {parseInt(user.id) === parseInt(userId) ? (
+            <></>
+          ) : (
+            <button className="follow">Follow</button>
+          )}
+        </div>
         <section>
           <Message>There are no posts yet</Message>
+          <Trending />
         </section>
       </>
     );
@@ -67,11 +79,21 @@ const UserPosts = ({ token }) => {
 
   return (
     <>
-      <h2>{title}</h2>
+      <div className="name-container">
+        <h2>{title}</h2>
+        {parseInt(user.id) === parseInt(userId) ? (
+          <></>
+        ) : (
+          <button className="follow">Follow</button>
+        )}
+      </div>
       <section>
-        {userData.posts.map((post, index) => (
-          <Post post={post} key={index} />
-        ))}
+        <div className="posts">
+          {userData.posts.map((post, index) => (
+            <Post post={post} key={index} />
+          ))}
+        </div>
+        <Trending />
       </section>
     </>
   );

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiFillDelete,AiFillEdit } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect , useRef} from "react";
@@ -58,23 +58,30 @@ export default function Post({ post }) {
     setDescriptionList(newList)
   }
   
-  function editButton(){
-    if(editing){
-      const promise= editPost(post.postId,{description:input},token)
-      promise.then(()=>defineDescriptionList(input))
+  
+ 
+  const eventHandler=async(e)=>{
+    if(e.key== "Enter"){
+      console.log('input após o enter:',input)
+      await editPost(post.postId,{description:input},token)
+      defineDescriptionList(input)
+      setEditing(false)
     }
-    setEditing(!editing)
-    
+    if(e.key== "Escape"){setEditing(false)}
   }
+  
+  useEffect(()=>{
+    if(editing){
+      inputRef.current.focus()
+      document.addEventListener('keydown',eventHandler)
+    }else{document.removeEventListener('keydown',eventHandler)}
+  },[editing])
 
   useEffect(()=>{
     defineDescriptionList(post.description)
     
   },[])
-  
-  useEffect(()=>{
-    if(editing)inputRef.current.focus()
-  },[editing])
+
   // useEffect(() => {
   //   getTooltip();
   // }, []);
@@ -169,21 +176,21 @@ export default function Post({ post }) {
           </Link>
           <span>
             {owner?
-              <button onClick={editButton}>
-                editar
+              <button onClick={()=>setEditing(!editing)}>
+                <AiFillEdit/>
               </button>
             :<></>}
             {owner?
               <button onClick={()=>setDeleting(true)}>
-                apagar
+                <AiFillDelete/>
               </button>
             :<></>}
           </span>
           
         </FirstLine>
-        <input ref={inputRef} className={editing?'normal':'invisible'} value={input} onChange={e=>setInput(e.target.value)}></input>
+        
         {editing?
-          <></>
+          <input ref={inputRef} value={input} onChange={e=>{setInput(e.target.value);console.log(input)}}></input>
         :
           <p className="description">{descriptionList.map(readHashtags)}</p>
         }
@@ -212,6 +219,12 @@ export default function Post({ post }) {
 const FirstLine=styled.div`
 width:100%;
 display:flex;justify-content:space-between;
+button {
+  background-color: #171717;
+  color: #ffffff;
+  border: none;
+  font-size: 20px;
+}
 `
 
 const PostContainer = styled.div`
@@ -288,7 +301,6 @@ const ContentContainer = styled.div`
     border-radius:10px;
     margin-bottom:12px;
   }
-  .invisible{display:none}
 `;
 
 const SnippetContainer = styled.div`

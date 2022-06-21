@@ -7,6 +7,11 @@ const ContentRP = styled.main`
         min-width: 100vw;
         background-color: #000;
         display: flex;
+
+        @media (max-width: 613px){
+            display: flex;
+            flex-direction: column;
+        }
     }
-`
+`;
 export { ContentRP };

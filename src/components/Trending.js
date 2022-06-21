@@ -29,10 +29,10 @@ export default function Trending() {
   );
 }
 const Container = styled.div`
-  width: 301px;
+  width: 700px;
   height: 406px;
   color: white;
-  margin: 72px 0 0 18px;
+  margin: 10px 0 0 18px;
   background: #171717;
   border-radius: 16px;
   h3 {

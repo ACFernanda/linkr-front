@@ -3,7 +3,6 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
   background-color: #333333;
   padding-top: 3%;
 
@@ -15,20 +14,38 @@ const Container = styled.div`
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
-  width: 45%;
-  max-width: 611px;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+
+  .name-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
 
   h2 {
     font-family: "Oswald";
     font-weight: 700;
     font-size: 38px;
-    margin-bottom: 40px;
+  }
+
+  button.follow {
+    width: 112px;
+    height: 31px;
+    margin-right: 5px;
+    background: #1877f2;
+    border: none;
+    border-radius: 5px;
+    font-family: "Lato";
+    font-weight: 700;
+    font-size: 14px;
+    color: #ffffff;
   }
 
   section {
     display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   @media (max-width: 613px) {
@@ -43,13 +60,12 @@ const Main = styled.div`
 `;
 
 const Message = styled.span`
-    font-family: "Oswald";
-    font-size: 30px;
+  font-family: "Oswald";
+  font-size: 30px;
 
-    @media (max-width: 613px) {
-      font-size: 20px;
-    }
+  @media (max-width: 613px) {
+    font-size: 20px;
+  }
 `;
-
 
 export { Main, Container, Message };

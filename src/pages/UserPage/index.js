@@ -67,9 +67,11 @@ const UserPosts = ({ token, user }) => {
     if (follow === true) {
       unfollowUser({ unfollowUserId: userId }, token);
     }
+
     if (follow === false) {
       followUser({ followUserId: userId }, token);
     }
+
     setFollow(!follow);
   }
 

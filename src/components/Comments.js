@@ -13,7 +13,10 @@ export default function Comments({postId}) {
   const [input,setInput]=useState('')
   async function sendComment(){
     const promise= publishComment(postId,{text:input},token)
-    promise.then(searchComments)  
+    promise.then(()=>{
+        searchComments()
+        setInput('')
+    })  
     promise.catch(e=>console.log(e))
   }
   async function searchComments(){

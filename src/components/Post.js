@@ -13,37 +13,48 @@ export default function Post({ post }) {
   const { token } = useContext(TokenContext);
 
   const [like, setLike] = useState(false);
-  const [countLikes, setCountLikes] = useState(post.countLikes);
+  const [likes, setLikes] = useState([]);
+  const [countLikes, setCountLikes] = useState(0);
+  const [tooltip, setTooltip] = useState("");
+  const [countComments, setCountComments] = useState(0);
+  const [commenting, setCommenting] = useState(false)
 
-  
-  // FIX 
-  const [countComments, setCountComments] = useState(post.countComments);
+  useEffect(() => {
+    setLike(post.likedByUser);
+    setLikes(post.likes);
+    setCountLikes(Number(post.countLikes));
+    // FIX
+    setCountComments(post.countComments);
+    setTooltip("");
+    setCommenting(false);
+  }, [post])
+
+
   console.log(post.countComments)
-  //
 
+  useEffect(() => {
+    const usernameIndex = likes.indexOf(user.username);
+    if (usernameIndex !== -1) {
+      const likesAux = [...likes];
+      likesAux.splice(usernameIndex, 1);
+      likesAux.unshift("You");
+      setLikes(likesAux);
+    }
+  }, [likes]);
 
-  const [tooltip, setTooltip] = useState(post.countLikes);
-  const [commenting,setCommenting]=useState(false)
-  // useEffect(() => {
-  //   let userLiked;
-  //   if (post.likes.length) {
-  //     userLiked = post.likes.find((item) => item.userId === user.id);
-  //   }
-  //   if (userLiked) {
-  //     setLike(!like);
-  //   }
-  // }, []);
+  useEffect(() => {
+    setTooltip(configureTooltip());
+  }, [likes])
 
-  function readHashtags(word) {
+  function readHashtags(word, index) {
     if (word[0] === "#") {
       return (
-        <Link to={`/hashtag/${word.replace("#", "")}`}>
-          <span
+        <Link key={index} to={`/hashtag/${word.replace("#", "")}`}>
+          <Hashtag key={index}
             className="hashtag"
-            style={{ color: "#ffffff", fontWeight: 700 }}
           >
             {word}
-          </span>
+          </Hashtag>
         </Link>
       );
     } else {
@@ -59,129 +70,98 @@ export default function Post({ post }) {
       newList.push(" ");
     }
   }
-  // useEffect(() => {
-  //   getTooltip();
-  // }, []);
 
-  // function getTooltip() {
-  //   const likes = post.likes;
-  //   if (likes.length) {
-  //     const notUser = likes.filter((item) => item.id !== user.id);
-  //     const namesNotUser = notUser.map((item) => item.username);
-  //     if (likes.filter((item) => item.id === user.id).length > 0) {
-  //       if (namesNotUser.length === 0) {
-  //         setTooltip("You");
-  //       }
-  //       if (namesNotUser.length === 1) {
-  //         setTooltip("You and " + namesNotUser[0]);
-  //       } else if (namesNotUser.length === 2) {
-  //         setTooltip("You, " + namesNotUser[0] + " and another person");
-  //       } else if (namesNotUser.length > 2) {
-  //         setTooltip(
-  //           "You, " +
-  //             namesNotUser[0] +
-  //             " and " +
-  //             (likes.length - 2) +
-  //             " other people"
-  //         );
-  //       }
-  //     } else {
-  //       if (namesNotUser.length === 0) {
-  //         setTooltip(null);
-  //       }
-  //       if (namesNotUser.length === 1) {
-  //         setTooltip(namesNotUser[0]);
-  //       } else if (namesNotUser.length === 2) {
-  //         setTooltip(namesNotUser[0] + " e " + namesNotUser[1]);
-  //       } else if (namesNotUser.length === 3) {
-  //         setTooltip(
-  //           namesNotUser[0] + ", " + namesNotUser[1] + ", and another person"
-  //         );
-  //       } else if (namesNotUser.length > 3) {
-  //         setTooltip(
-  //           namesNotUser[0] +
-  //             ", " +
-  //             namesNotUser[1] +
-  //             ", and " +
-  //             (likes.length - 2) +
-  //             " other people"
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
+  function likeAndDislike() {
+    if (like === true) {
+      dislikePost({ postId: post.postId }, token);
+      setCountLikes(Number(countLikes) - 1);
+      const newLikes = likes.slice(1);
+      setLikes(newLikes);
+    }
+    if (like === false) {
+      likePost({ postId: post.postId }, token);
+      setCountLikes(Number(countLikes) + 1);
+      const newLikes = ["You", ...likes];
+      setLikes(newLikes);
+    }
+    setLike(!like);
+  }
+
+  function configureTooltip() {
+    let tooltipText = "";
+    if (countLikes === 0) {
+      tooltipText = "Noboby liked";
+    }
+    else if (countLikes === 1) {
+      tooltipText = likes[0];
+    }
+    else if (countLikes === 2) {
+      tooltipText = likes.join(' and ');
+    }
+    else {
+      const otherPeople = countLikes - 2;
+      tooltipText = `${likes[0]}, ${likes[1]} and other ${otherPeople} people`;
+    }
+
+    return tooltipText;
+  }
 
   return (
     <>
-    <PostContainer key={post.postId}>
-      <PictureContainer countLikes={countLikes}>
-        <img src={post.pictureURL} alt="" />
-        <IconContext.Provider value={{ className: "react-icons" }}>
-          <button
-            onClick={() => {
-              // getTooltip();
-              if (like === true) {
-                dislikePost({ postId: post.postId }, token);
-                setCountLikes(Number(countLikes) - 1);
-              }
-              if (like === false) {
-                likePost({ postId: post.postId }, token);
-                setCountLikes(Number(countLikes) + 1);
-              }
-              setLike(!like);
-            }}
-          >
-            {like === false ? (
-              <AiOutlineHeart />
+      <PostContainer key={post.postId}>
+        <PictureContainer countLikes={countLikes}>
+          <img src={post.pictureURL} alt="" />
+          <IconContext.Provider value={{ className: "react-icons" }}>
+            <button onClick={likeAndDislike}>
+              {like === false ? (
+                <AiOutlineHeart />
+              ) : (
+                <AiFillHeart style={{ color: "#AC0000" }} />
+              )}
+            </button>
+            <ReactTooltip place="bottom" type="light" effect="solid" />
+            {Number(countLikes) === 1 ? (
+              <p data-tip={tooltip}>{countLikes} like</p>
             ) : (
-              <AiFillHeart style={{ color: "#AC0000" }} />
+              <p data-tip={tooltip}>{countLikes} likes</p>
             )}
-          </button>
-          
-        
-        <ReactTooltip place="bottom" type="light" effect="solid" />
-        {countComments === 1 ? (
-          <p data-tip={tooltip}>{countComments} like</p>
-        ) : (
-          <p data-tip={tooltip}>{countComments} likes</p>
-        )}
-        <button onClick={()=>setCommenting(!commenting)}>
-            <AiOutlineComment/>
-          </button>
-          <ReactTooltip place="bottom" type="light" effect="solid" />
-        {countLikes === 1 ? (
-          <p data-tip={tooltip}>{countLikes} comment</p>
-        ) : (
-          <p data-tip={tooltip}>{countLikes} comments</p>
-        )}
+
+            <button onClick={() => setCommenting(!commenting)}>
+              <AiOutlineComment />
+            </button>
+            {countComments === 1 ? (
+              <p >{countComments} comment</p>
+            ) : (
+              <p >{countComments} comments</p>
+            )}
           </IconContext.Provider>
-      </PictureContainer>
-      <ContentContainer>
-        <Link to={`/user/${post.userId}`}>
-          <p className="username">{post.username}</p>
-        </Link>
-        <p className="description">{newList.map(readHashtags)}</p>
-        <SnippetContainer
-          onClick={() => window.open(post.url, "_blank").focus()}
-        >
-          <InfoContainer>
-            <p className="title">{post.urlTitle}</p>
-            <p className="url-description">{post.urlDescription}</p>
-            <a
-              href={post.url}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              {post.url}
-            </a>
-          </InfoContainer>
-          <ImageContainer urlImage={post.urlImage}></ImageContainer>
-        </SnippetContainer>
-      </ContentContainer>
-      
-    </PostContainer>
-    {commenting?<Comments post={post}/>:<></>}
+        </PictureContainer>
+        <ContentContainer>
+          <Link to={`/user/${post.userId}`}>
+            <p className="username">{post.username}</p>
+          </Link>
+          <p className="description">{newList.map(readHashtags)}</p>
+          <SnippetContainer
+            onClick={() => window.open(post.url, "_blank").focus()}
+          >
+            <InfoContainer>
+              <p className="title">{post.urlTitle}</p>
+              <p className="url-description">{post.urlDescription}</p>
+              <a
+                href={post.url}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                {post.url}
+              </a>
+            </InfoContainer>
+            <ImageContainer urlImage={post.urlImage}></ImageContainer>
+          </SnippetContainer>
+        </ContentContainer>
+
+      </PostContainer>
+      {commenting ? <Comments post={post} /> : <></>}
     </>
   );
 }
@@ -213,6 +193,7 @@ const PictureContainer = styled.div`
     color: #ffffff;
     border: none;
     font-size: 20px;
+    cursor: pointer;
   }
   p {
     color: #ffffff;
@@ -308,4 +289,9 @@ const ImageContainer = styled.div`
   background-position: center;
   background-size: cover;
   margin-left: 7px;
+`;
+
+const Hashtag = styled.span`
+   color: "#ffffff";
+   font-weight: 700;
 `;

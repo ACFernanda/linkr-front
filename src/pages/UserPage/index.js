@@ -28,7 +28,6 @@ const UserPosts = ({ token, user }) => {
   const [userData, setUserData] = useState(null);
   const [follow, setFollow] = useState(null);
   const { id: userId } = useParams();
-  console.log(follow);
 
   useEffect(() => {
     const promise = getUserPosts(userId, token);

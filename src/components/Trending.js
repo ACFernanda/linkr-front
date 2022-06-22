@@ -8,9 +8,11 @@ export default function Trending() {
   const [trendingList, setTrendingList] = useState([]);
   function renderTrendings(item) {
     return (
-      <Link to={`/hashtag/${item.name}`}>
-        <p>#{item.name}</p>
-      </Link>
+      <div key={item.name}>
+        <Link to={`/hashtag/${item.name}`}>
+          <p>#{item.name}</p>
+        </Link>
+      </div>
     );
   }
   useEffect(() => {

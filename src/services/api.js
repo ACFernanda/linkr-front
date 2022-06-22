@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: "http://localhost:5000",
 });
 
 export const signUp = async (formData) => {
@@ -11,6 +11,22 @@ export const signUp = async (formData) => {
 export const signIn = async (formData) => {
   return api.post("/sign-in", formData);
 }
+
+export const publishComment = async (postId, formData, token) => {
+  return api.post(`/comments/${postId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getComments = async (postId, myUserId, token) => {
+  return api.get(`/comments/${postId}?id=${myUserId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export const publishPost = async (formData, token) => {
   await api.post("/posts", formData, {

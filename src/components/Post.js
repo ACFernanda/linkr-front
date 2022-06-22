@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect } from "react";
@@ -7,7 +7,7 @@ import ReactTooltip from "react-tooltip";
 import { dislikePost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
-
+import Comments from './Comments'
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
@@ -16,14 +16,21 @@ export default function Post({ post }) {
   const [likes, setLikes] = useState([]);
   const [countLikes, setCountLikes] = useState(0);
   const [tooltip, setTooltip] = useState("");
+  const [countComments, setCountComments] = useState(0);
+  const [commenting, setCommenting] = useState(false)
 
   useEffect(() => {
     setLike(post.likedByUser);
     setLikes(post.likes);
     setCountLikes(Number(post.countLikes));
+    // FIX
+    setCountComments(post.countComments);
     setTooltip("");
-    console.log("Rendezirando post!");
+    setCommenting(false);
   }, [post])
+
+
+  console.log(post.countComments)
 
   useEffect(() => {
     const usernameIndex = likes.indexOf(user.username);
@@ -100,49 +107,62 @@ export default function Post({ post }) {
   }
 
   return (
-    <PostContainer key={post.postId}>
-      <PictureContainer countLikes={countLikes}>
-        <img src={post.pictureURL} alt="" />
-        <IconContext.Provider value={{ className: "react-icons" }}>
-          <button onClick={likeAndDislike}>
-            {like === false ? (
-              <AiOutlineHeart />
+    <>
+      <PostContainer key={post.postId}>
+        <PictureContainer countLikes={countLikes}>
+          <img src={post.pictureURL} alt="" />
+          <IconContext.Provider value={{ className: "react-icons" }}>
+            <button onClick={likeAndDislike}>
+              {like === false ? (
+                <AiOutlineHeart />
+              ) : (
+                <AiFillHeart style={{ color: "#AC0000" }} />
+              )}
+            </button>
+            <ReactTooltip place="bottom" type="light" effect="solid" />
+            {Number(countLikes) === 1 ? (
+              <p data-tip={tooltip}>{countLikes} like</p>
             ) : (
-              <AiFillHeart style={{ color: "#AC0000" }} />
+              <p data-tip={tooltip}>{countLikes} likes</p>
             )}
-          </button>
-        </IconContext.Provider>
-        <ReactTooltip place="bottom" type="light" effect="solid" />
-        {Number(countLikes) === 1 ? (
-          <p data-tip={tooltip}>{countLikes} like</p>
-        ) : (
-          <p data-tip={tooltip}>{countLikes} likes</p>
-        )}
-      </PictureContainer>
-      <ContentContainer>
-        <Link to={`/user/${post.userId}`}>
-          <p className="username">{post.username}</p>
-        </Link>
-        <p className="description">{newList.map(readHashtags)}</p>
-        <SnippetContainer
-          onClick={() => window.open(post.url, "_blank").focus()}
-        >
-          <InfoContainer>
-            <p className="title">{post.urlTitle}</p>
-            <p className="url-description">{post.urlDescription}</p>
-            <a
-              href={post.url}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-            >
-              {post.url}
-            </a>
-          </InfoContainer>
-          <ImageContainer urlImage={post.urlImage}></ImageContainer>
-        </SnippetContainer>
-      </ContentContainer>
-    </PostContainer>
+
+            <button onClick={() => setCommenting(!commenting)}>
+              <AiOutlineComment />
+            </button>
+            {countComments === 1 ? (
+              <p >{countComments} comment</p>
+            ) : (
+              <p >{countComments} comments</p>
+            )}
+          </IconContext.Provider>
+        </PictureContainer>
+        <ContentContainer>
+          <Link to={`/user/${post.userId}`}>
+            <p className="username">{post.username}</p>
+          </Link>
+          <p className="description">{newList.map(readHashtags)}</p>
+          <SnippetContainer
+            onClick={() => window.open(post.url, "_blank").focus()}
+          >
+            <InfoContainer>
+              <p className="title">{post.urlTitle}</p>
+              <p className="url-description">{post.urlDescription}</p>
+              <a
+                href={post.url}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                {post.url}
+              </a>
+            </InfoContainer>
+            <ImageContainer urlImage={post.urlImage}></ImageContainer>
+          </SnippetContainer>
+        </ContentContainer>
+
+      </PostContainer>
+      {commenting ? <Comments post={post} /> : <></>}
+    </>
   );
 }
 
@@ -154,6 +174,7 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin: 12px 0 10px 0;
+  position:relative;
   @media (max-width: 613px) {
     border-radius: 0;
   }

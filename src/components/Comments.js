@@ -6,9 +6,10 @@ import { IconContext } from "react-icons";
 import TokenContext from "../contexts/TokenContext";
 import UserContext from "./../contexts/UserContext.js";
 import { AiOutlineSend } from "react-icons/ai";
-export default function Comments({postId}) {
+export default function Comments({post}) {
   const { token } = useContext(TokenContext);
   const { user } = useContext(UserContext);
+  const {postId,userId:postUserId}=post
   const [commentList, setCommentList] = useState([]);
   const [input,setInput]=useState('')
   async function sendComment(){
@@ -27,13 +28,15 @@ export default function Comments({postId}) {
   }
    function mapComments(comment) {
     const {pictureURL,userId,username,text}=comment
+    const listOwnerStatus=[]
+    if(userId===postUserId){listOwnerStatus.push(<span> • post's author</span>)}
     return (
      <CommentContainer>
         <Comment>
             <img src={pictureURL} alt="" />
             <div>
                 <Link to={`/user/${userId}`}>
-                    <h4 className="username">{username}</h4>
+                    <h4 className="username">{username}{listOwnerStatus.map(item=>item)}</h4>
                 </Link>
                 <p>{text}</p>
             </div>
@@ -94,6 +97,14 @@ line-height: 17px;
 color: #ACACAC;
 }
 div{height:39px}
+span{
+    font-family: 'Lato';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+color: #565656;
+}
 `
 const Container=styled.div`
 width: 100%;

@@ -174,7 +174,7 @@ export default function Post({ post }) {
       </ContentContainer>
       
     </PostContainer>
-    {commenting?<Comments postId={post.postId}/>:<></>}
+    {commenting?<Comments post={post}/>:<></>}
     </>
   );
 }

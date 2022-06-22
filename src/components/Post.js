@@ -12,30 +12,19 @@ export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
 
-  const [like, setLike] = useState(false);
+  const [like, setLike] = useState(post.likedByUser);
   const [countLikes, setCountLikes] = useState(post.countLikes);
   const [tooltip, setTooltip] = useState(post.countLikes);
 
-  // useEffect(() => {
-  //   let userLiked;
-  //   if (post.likes.length) {
-  //     userLiked = post.likes.find((item) => item.userId === user.id);
-  //   }
-  //   if (userLiked) {
-  //     setLike(!like);
-  //   }
-  // }, []);
-
-  function readHashtags(word) {
+  function readHashtags(word, index) {
     if (word[0] === "#") {
       return (
-        <Link to={`/hashtag/${word.replace("#", "")}`}>
-          <span
+        <Link key={index} to={`/hashtag/${word.replace("#", "")}`}>
+          <Hashtag key={index}
             className="hashtag"
-            style={{ color: "#ffffff", fontWeight: 700 }}
           >
             {word}
-          </span>
+          </Hashtag>
         </Link>
       );
     } else {
@@ -51,77 +40,25 @@ export default function Post({ post }) {
       newList.push(" ");
     }
   }
-  // useEffect(() => {
-  //   getTooltip();
-  // }, []);
 
-  // function getTooltip() {
-  //   const likes = post.likes;
-  //   if (likes.length) {
-  //     const notUser = likes.filter((item) => item.id !== user.id);
-  //     const namesNotUser = notUser.map((item) => item.username);
-  //     if (likes.filter((item) => item.id === user.id).length > 0) {
-  //       if (namesNotUser.length === 0) {
-  //         setTooltip("You");
-  //       }
-  //       if (namesNotUser.length === 1) {
-  //         setTooltip("You and " + namesNotUser[0]);
-  //       } else if (namesNotUser.length === 2) {
-  //         setTooltip("You, " + namesNotUser[0] + " and another person");
-  //       } else if (namesNotUser.length > 2) {
-  //         setTooltip(
-  //           "You, " +
-  //             namesNotUser[0] +
-  //             " and " +
-  //             (likes.length - 2) +
-  //             " other people"
-  //         );
-  //       }
-  //     } else {
-  //       if (namesNotUser.length === 0) {
-  //         setTooltip(null);
-  //       }
-  //       if (namesNotUser.length === 1) {
-  //         setTooltip(namesNotUser[0]);
-  //       } else if (namesNotUser.length === 2) {
-  //         setTooltip(namesNotUser[0] + " e " + namesNotUser[1]);
-  //       } else if (namesNotUser.length === 3) {
-  //         setTooltip(
-  //           namesNotUser[0] + ", " + namesNotUser[1] + ", and another person"
-  //         );
-  //       } else if (namesNotUser.length > 3) {
-  //         setTooltip(
-  //           namesNotUser[0] +
-  //             ", " +
-  //             namesNotUser[1] +
-  //             ", and " +
-  //             (likes.length - 2) +
-  //             " other people"
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
+  function likeAndDislike() {
+    if (like === true) {
+      dislikePost({ postId: post.postId }, token);
+      setCountLikes(Number(countLikes) - 1);
+    }
+    if (like === false) {
+      likePost({ postId: post.postId }, token);
+      setCountLikes(Number(countLikes) + 1);
+    }
+    setLike(!like);
+  }
 
   return (
     <PostContainer key={post.postId}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
         <IconContext.Provider value={{ className: "react-icons" }}>
-          <button
-            onClick={() => {
-              // getTooltip();
-              if (like === true) {
-                dislikePost({ postId: post.postId }, token);
-                setCountLikes(Number(countLikes) - 1);
-              }
-              if (like === false) {
-                likePost({ postId: post.postId }, token);
-                setCountLikes(Number(countLikes) + 1);
-              }
-              setLike(!like);
-            }}
-          >
+          <button onClick={likeAndDislike}>
             {like === false ? (
               <AiOutlineHeart />
             ) : (
@@ -130,7 +67,7 @@ export default function Post({ post }) {
           </button>
         </IconContext.Provider>
         <ReactTooltip place="bottom" type="light" effect="solid" />
-        {countLikes === 1 ? (
+        {Number(countLikes) === 1 ? (
           <p data-tip={tooltip}>{countLikes} like</p>
         ) : (
           <p data-tip={tooltip}>{countLikes} likes</p>
@@ -189,6 +126,7 @@ const PictureContainer = styled.div`
     color: #ffffff;
     border: none;
     font-size: 20px;
+    cursor: pointer;
   }
   p {
     color: #ffffff;
@@ -284,4 +222,9 @@ const ImageContainer = styled.div`
   background-position: center;
   background-size: cover;
   margin-left: 7px;
+`;
+
+const Hashtag = styled.span`
+   color: "#ffffff";
+   font-weight: 700;
 `;

@@ -20,6 +20,7 @@ export default function Post({ post }) {
   const [input,setInput]=useState(post.description)
   const [descriptionList,setDescriptionList]=useState([])
   const [inputDisabled,setInputDisabled]=useState(false)
+  const [error,setError]=useState('')
   const owner=user.id===post.userId
   // useEffect(() => {
   //   let userLiked;
@@ -70,7 +71,12 @@ export default function Post({ post }) {
         defineDescriptionList(input) //gambiarra
         setEditing(false)
         setInputDisabled(false)
-      }catch(e){setInputDisabled(false);console.log(e)}
+      }catch(e){
+        console.log(e)
+        setInputDisabled(false)
+        setError('It was not possible to edit the post')
+        setTimeout(()=>setError(''),4000)
+      }
     }
     if(e.key== "Escape"){setEditing(false)}
   }
@@ -141,7 +147,8 @@ export default function Post({ post }) {
 
   return (
     <PostContainer key={post.postId}>
-      {deleting?<DeleteModal postId={post.postId} setDeleting={setDeleting} />:<></>}
+      {deleting?<DeleteModal setError={setError} postId={post.postId} setDeleting={setDeleting} />:<></>}
+      {error!==''?<ErrorMessage><p>{error}</p></ErrorMessage>:<></>}
       <IconContext.Provider value={{ className: "react-icons" }}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
@@ -221,6 +228,20 @@ export default function Post({ post }) {
     </PostContainer>
   );
 }
+
+const ErrorMessage=styled.div`
+position:absolute;
+top:-19px;right:0;
+p{
+  color: orange;
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+}
+`
+
 const FirstLine=styled.div`
 width:100%;
 display:flex;justify-content:space-between;
@@ -233,6 +254,7 @@ button {
 `
 
 const PostContainer = styled.div`
+position:relative;
   padding: 12px;
   width: 100%;
   background-color: #171717;

@@ -3,7 +3,7 @@ import { deletePost } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
 import { useContext } from "react";
  
-export default function DeleteModal({postId,setDeleting}){
+export default function DeleteModal({postId,setDeleting,setError}){
     const { token } = useContext(TokenContext);
     return(
         <Overlay>
@@ -12,8 +12,14 @@ export default function DeleteModal({postId,setDeleting}){
                 <div>
                     <ButtonNo onClick={()=>setDeleting(false)}><p>No, go back</p></ButtonNo>
                     <ButtonYes onClick={async()=>{
-                        await deletePost(postId,token)
-                        setDeleting(false)
+                        try{
+                            await deletePost(postId,token)
+                            setDeleting(false)}
+                        catch{
+                            setError('It was not possible to delete the post')
+                            setTimeout(()=>setError(''),4000)
+                            setDeleting(false)
+                        }
                         }}><p>Yes, delete it</p></ButtonYes>
                 </div>
             </Content>

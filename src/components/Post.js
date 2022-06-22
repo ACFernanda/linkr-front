@@ -19,6 +19,7 @@ export default function Post({ post }) {
   const [deleting,setDeleting]=useState(false)
   const [input,setInput]=useState(post.description)
   const [descriptionList,setDescriptionList]=useState([])
+  const [inputDisabled,setInputDisabled]=useState(false)
   const owner=user.id===post.userId
   // useEffect(() => {
   //   let userLiked;
@@ -64,10 +65,12 @@ export default function Post({ post }) {
     if(e.key== "Enter"){
       console.log('input após o enter:',input)
       try{
+        setInputDisabled(true)
         await editPost(post.postId,{description:input},token)
-        defineDescriptionList(input)
+        defineDescriptionList(input) //gambiarra
         setEditing(false)
-      }catch(e){console.log(e)}
+        setInputDisabled(false)
+      }catch(e){setInputDisabled(false);console.log(e)}
     }
     if(e.key== "Escape"){setEditing(false)}
   }
@@ -192,7 +195,7 @@ export default function Post({ post }) {
         </FirstLine>
         
         {editing?
-          <input ref={inputRef} value={input} onChange={e=>{setInput(e.target.value);console.log(input)}}></input>
+          <input ref={inputRef} value={input} onChange={e=>{setInput(e.target.value);console.log(input)}} disabled={inputDisabled?true:false}></input>
         :
           <p className="description">{descriptionList.map(readHashtags)}</p>
         }

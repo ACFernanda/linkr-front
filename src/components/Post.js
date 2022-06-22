@@ -13,8 +13,21 @@ export default function Post({ post }) {
   const { token } = useContext(TokenContext);
 
   const [like, setLike] = useState(post.likedByUser);
-  const [countLikes, setCountLikes] = useState(post.countLikes);
-  const [tooltip, setTooltip] = useState(post.countLikes);
+  const [likes, setLikes] = useState(post.likes);
+  const [countLikes, setCountLikes] = useState(Number(post.countLikes));
+  const [tooltip, setTooltip] = useState("");
+
+  console.log(likes);
+
+  useEffect(()=> {
+    const usernameIndex = likes.indexOf(user.username);
+    if (usernameIndex !== -1) {
+      const likesAux = [...likes];
+      likesAux.splice(usernameIndex, 1);
+      likesAux.unshift("You");
+      setLikes(likesAux);
+    }
+  }, []);
 
   function readHashtags(word, index) {
     if (word[0] === "#") {
@@ -45,13 +58,40 @@ export default function Post({ post }) {
     if (like === true) {
       dislikePost({ postId: post.postId }, token);
       setCountLikes(Number(countLikes) - 1);
+      const newLikes = likes.slice(1);
+      setLikes(newLikes);
     }
     if (like === false) {
       likePost({ postId: post.postId }, token);
       setCountLikes(Number(countLikes) + 1);
+      const newLikes = ["You", ...likes];
+      setLikes(newLikes);
     }
     setLike(!like);
   }
+
+  function configureTooltip( ){
+    let tooltipText = "";
+    if (countLikes === 0) {
+      tooltipText = "Noboby liked";
+    }
+    else if (countLikes === 1) {
+      tooltipText = likes[0];
+    }
+    else if (countLikes === 2) {
+      tooltipText = likes.join(' and ');
+    }
+    else {
+      const otherPeople = countLikes - 2;
+      tooltipText = `${likes[0]}, ${likes[1]} and other ${otherPeople} people`;
+    }
+
+    return tooltipText;
+  }
+
+  useEffect(() => {
+    setTooltip(configureTooltip());
+  }, [likes])
 
   return (
     <PostContainer key={post.postId}>

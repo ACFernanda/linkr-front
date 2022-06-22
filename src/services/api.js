@@ -6,11 +6,11 @@ export const api = axios.create({
 
 export const signUp = async (formData) => {
   return api.post("/sign-up", formData);
-}
+};
 
 export const signIn = async (formData) => {
   return api.post("/sign-in", formData);
-}
+};
 
 export const publishComment = async (postId, formData, token) => {
   return api.post(`/comments/${postId}`, formData, {
@@ -38,6 +38,14 @@ export const publishPost = async (formData, token) => {
 
 export const getAllPosts = async (token) => {
   return api.get("/posts", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getAllFollowing = async (token) => {
+  return api.get("/follows", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

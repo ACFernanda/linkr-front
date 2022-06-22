@@ -7,7 +7,7 @@ import ReactTooltip from "react-tooltip";
 import { dislikePost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
-
+import Comments from './Comments'
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
@@ -15,7 +15,7 @@ export default function Post({ post }) {
   const [like, setLike] = useState(false);
   const [countLikes, setCountLikes] = useState(post.countLikes);
   const [tooltip, setTooltip] = useState(post.countLikes);
-
+  const [commenting,setCommenting]=useState(true)
   // useEffect(() => {
   //   let userLiked;
   //   if (post.likes.length) {
@@ -104,6 +104,7 @@ export default function Post({ post }) {
   // }
 
   return (
+    <>
     <PostContainer key={post.postId}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
@@ -159,7 +160,10 @@ export default function Post({ post }) {
           <ImageContainer urlImage={post.urlImage}></ImageContainer>
         </SnippetContainer>
       </ContentContainer>
+      
     </PostContainer>
+    {commenting?<Comments postId={post.postId}/>:<></>}
+    </>
   );
 }
 
@@ -171,6 +175,7 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin: 12px 0 10px 0;
+  position:relative;
   @media (max-width: 613px) {
     border-radius: 0;
   }

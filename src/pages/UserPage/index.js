@@ -110,9 +110,12 @@ const UserPosts = ({ token, user }) => {
               onClick={() => toggleFollow()}
               className="follow"
               disabled={follow === null ? true : false}
-              follow={follow}
+              style={{
+                background: follow === true ? "#FFFFFF" : "#1877f2",
+                color: follow === false ? "#FFFFFF" : "#1877f2",
+              }}
             >
-              Follow
+              {follow ? "Unfollow" : "Follow"}
             </button>
           )}
         </div>

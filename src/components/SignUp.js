@@ -3,9 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import { api } from "../services/api.js";
+import { signUp } from "../services/api.js";
 
-export default function SignIn() {
+export default function SignUp() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -25,22 +25,21 @@ export default function SignIn() {
         username: formData.username,
         imageURL: formData.imageURL,
       };
-      const response = await api.post("sign-up", body);
+      const response = await signUp(body);
       handleSuccess(response);
     } catch (error) {
-      console.log(error);
-      resetAll();
+      handleError(error);
     }
   }
 
   function handleSuccess() {
-    navigate("/"); // insert alert of create account
+    navigate("/");
   }
 
-  //   function handleError(res) {
-  //     console.log(res.error);
-  //     resetAll();
-  //   }
+  function handleError(error) {
+    alert(`Error: ${error.response.data.message}`);
+    resetAll();
+  }
 
   function resetAll() {
     setHasSubmitted(false);
@@ -80,7 +79,7 @@ export default function SignIn() {
           setHasSubmitted(true);
           setTimeout(() => {
             handleSignup();
-          }, getRandomInt(500, 2000));
+          }, getRandomInt(500, 1000));
         }}
       >
         <input
@@ -89,6 +88,7 @@ export default function SignIn() {
           name="email"
           value={formData.email}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
         <input
@@ -97,6 +97,7 @@ export default function SignIn() {
           name="password"
           value={formData.password}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
         <input
@@ -105,17 +106,19 @@ export default function SignIn() {
           name="username"
           value={formData.username}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
         <input
-          type="text"
+          type="url"
           placeholder="picture url"
           name="imageURL"
           value={formData.imageURL}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
-        <button type="submit" className={validateForm()}>
+        <button type="submit" className={validateForm()} disabled={hasSubmitted}>
           {!hasSubmitted ? (
             "Sign Up"
           ) : (
@@ -142,6 +145,11 @@ const RightSide = styled.section`
     justify-content: center;
     align-items: center;
     background-color: #333333;
+
+    @media (max-width: 613px) {
+      height: calc(100vh - 175px);
+      width: 100vw;
+    }
   }
 
   form {
@@ -168,6 +176,15 @@ const RightSide = styled.section`
     ::placeholder {
       color: #9f9f9f;
     }
+
+    :disabled{
+      background-color: lightgray;
+    }
+
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
 
   button {
@@ -185,6 +202,16 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+
+    :disabled {
+      background-color: lightgray;
+    }
+
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
 
   h3 {
@@ -200,5 +227,9 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+    @media (max-width: 613px) {
+      font-size: 17px;
+      line-height: 20px;
+    }
   }
 `;

@@ -1,8 +1,32 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5030" /*"https://projeto17-linkr-back.herokuapp.com/"*/,
+  baseURL: "http://localhost:5000" /*"https://projeto17-linkr-back.herokuapp.com/"*/,
 });
+
+export const signUp = async (formData) => {
+  return api.post("/sign-up", formData);
+}
+
+export const signIn = async (formData) => {
+  return api.post("/sign-in", formData);
+}
+
+export const publishComment = async (postId, formData, token) => {
+  return api.post(`/comments/${postId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getComments = async (postId, myUserId, token) => {
+  return api.get(`/comments/${postId}?id=${myUserId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export const publishPost = async (formData, token) => {
   await api.post("/posts", formData, {
@@ -81,6 +105,22 @@ export const likePost = async (formData, token) => {
 
 export const dislikePost = async (formData, token) => {
   await api.patch("/likes", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const followUser = async (formData, token) => {
+  await api.post("/follows", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const unfollowUser = async (formData, token) => {
+  await api.patch("/follows", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

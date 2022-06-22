@@ -23,14 +23,14 @@ const HomePage = () => {
     <>
       <Header />
       <Container>
-        <Main>
-          <h2>timeline</h2>
-          <NewPost token={token} user={user} />
-          <section>
+        <h2>timeline</h2>
+        <section>
+          <Main>
+            <NewPost token={token} user={user} />
             <RenderPosts token={token} />
-          </section>
-        </Main>
-        <Trending />
+          </Main>
+          <Trending />
+        </section>
       </Container>
     </>
   );

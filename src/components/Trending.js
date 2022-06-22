@@ -8,15 +8,16 @@ export default function Trending() {
   const [trendingList, setTrendingList] = useState([]);
   function renderTrendings(item) {
     return (
-      <Link to={`/hashtag/${item.name}`}>
-        <p>#{item.name}</p>
-      </Link>
+      <div key={item.name}>
+        <Link to={`/hashtag/${item.name}`}>
+          <p>#{item.name}</p>
+        </Link>
+      </div>
     );
   }
   useEffect(() => {
     (async () => {
       const response = await getTrandings(token);
-      console.log(response);
       setTrendingList(response.data);
     })();
   }, []);
@@ -29,10 +30,10 @@ export default function Trending() {
   );
 }
 const Container = styled.div`
-  width: 301px;
+  width: 700px;
   height: 406px;
   color: white;
-  margin: 72px 0 0 18px;
+  margin: 10px 0 0 18px;
   background: #171717;
   border-radius: 16px;
   h3 {

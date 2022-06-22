@@ -15,9 +15,10 @@ export default function DeleteModal({postId,setDeleting,setError}){
                         try{
                             await deletePost(postId,token)
                             setDeleting(false)}
-                        catch{
+                        catch(e){
                             setError('It was not possible to delete the post')
                             setTimeout(()=>setError(''),4000)
+                            console.log(e)
                             setDeleting(false)
                         }
                         }}><p>Yes, delete it</p></ButtonYes>

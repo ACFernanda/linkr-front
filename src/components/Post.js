@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart, AiFillDelete,AiFillEdit } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiFillDelete, AiFillEdit, AiOutlineComment } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect , useRef} from "react";
@@ -8,6 +8,7 @@ import { dislikePost, editPost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
 import DeleteModal from "./DeleteModal";
+import Comments from './Comments'
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
@@ -21,7 +22,18 @@ export default function Post({ post }) {
   const [descriptionList,setDescriptionList]=useState([])
   const [inputDisabled,setInputDisabled]=useState(false)
   const [error,setError]=useState('')
+  const [commenting,setCommenting]=useState(false)
   const owner=user.id===post.userId
+
+  
+  // FIX 
+  const [countComments, setCountComments] = useState(post.countComments);
+  const [tooltipComment, setTooltipComment] = useState(post.countComments);
+  console.log(post.countComments)
+  //
+
+
+  
   // useEffect(() => {
   //   let userLiked;
   //   if (post.likes.length) {
@@ -48,6 +60,7 @@ export default function Post({ post }) {
       return <span>{word}</span>;
     }
   }
+
   function defineDescriptionList(frase){
     const newList = [];
     const oldList = frase.split(" ");
@@ -60,27 +73,29 @@ export default function Post({ post }) {
     setDescriptionList(newList)
   }
   
-  
- 
-  const eventHandler=async(e)=>{
+  const eventHandler=(e)=>{
     if(e.key== "Enter"){
       console.log('input após o enter:',input)
-      try{
-        setInputDisabled(true)
-        await editPost(post.postId,{description:input},token)
-        defineDescriptionList(input) //gambiarra
-        setEditing(false)
-        setInputDisabled(false)
-      }catch(e){
-        console.log(e)
-        setInputDisabled(false)
-        setError('It was not possible to edit the post')
-        setTimeout(()=>setError(''),4000)
-      }
+      prepareToEdit()
     }
     if(e.key== "Escape"){setEditing(false)}
   }
   
+  async function prepareToEdit(){
+    try{
+      setInputDisabled(true)
+      await editPost(post.postId,{description:input},token)
+      defineDescriptionList(input) //gambiarra
+      setEditing(false)
+      setInputDisabled(false)
+    }catch(e){
+      console.log(e)
+      setInputDisabled(false)
+      setError('It was not possible to edit the post')
+      setTimeout(()=>setError(''),4000)
+    }
+  }
+
   useEffect(()=>{
     if(editing){
       inputRef.current.focus()
@@ -90,7 +105,6 @@ export default function Post({ post }) {
 
   useEffect(()=>{
     defineDescriptionList(post.description)
-    
   },[])
 
   // useEffect(() => {
@@ -146,6 +160,7 @@ export default function Post({ post }) {
   // }
 
   return (
+    <>
     <PostContainer key={post.postId}>
       {deleting?<DeleteModal setError={setError} postId={post.postId} setDeleting={setDeleting} />:<></>}
       {error!==''?<ErrorMessage><p>{error}</p></ErrorMessage>:<></>}
@@ -173,13 +188,26 @@ export default function Post({ post }) {
               <AiFillHeart style={{ color: "#AC0000" }} />
             )}
           </button>
-        
+          
         <ReactTooltip place="bottom" type="light" effect="solid" />
         {countLikes === 1 ? (
           <p data-tip={tooltip}>{countLikes} like</p>
         ) : (
           <p data-tip={tooltip}>{countLikes} likes</p>
         )}
+
+
+          <button onClick={()=>setCommenting(!commenting)}>
+            <AiOutlineComment/>
+          </button>
+
+          <ReactTooltip place="bottom" type="light" effect="solid" />
+          {countComments === 1 ? (
+            <p data-tip={tooltipComment}>{countComments} comment</p>
+          ) : (
+            <p data-tip={tooltipComment}>{countComments} comments</p>
+          )}
+          
       </PictureContainer>
       <ContentContainer>
         <FirstLine>
@@ -188,7 +216,7 @@ export default function Post({ post }) {
           </Link>
           <span>
             {owner?
-              <button onClick={()=>setEditing(!editing)}>
+              <button onClick={()=>{if(editing){prepareToEdit()}setEditing(!editing)}}>
                 <AiFillEdit/>
               </button>
             :<></>}
@@ -226,6 +254,8 @@ export default function Post({ post }) {
       </ContentContainer>
       </IconContext.Provider>
     </PostContainer>
+    {commenting?<Comments post={post}/>:<></>}
+    </>
   );
 }
 
@@ -262,6 +292,7 @@ position:relative;
   display: flex;
   flex-direction: row;
   margin: 12px 0 10px 0;
+  position:relative;
   @media (max-width: 613px) {
     border-radius: 0;
   }

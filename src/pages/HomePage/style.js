@@ -1,42 +1,43 @@
 import styled from "styled-components";
 
 const Container = styled.div`
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  width: 100%;
+  flex-direction: column;
+  width: 60%;
   background-color: #333333;
   padding-top: 3%;
 
+  h2 {
+    font-family: "Oswald";
+    font-weight: 700;
+    font-size: 38px;
+    color: #ffffff;
+    margin-bottom: 40px;
+  }
+
+  section {
+    display: flex;
+    flex-direction: row;
+  }
+
   @media (max-width: 613px) {
+    width: 100%;
     padding-top: 20%;
+
+    h2 {
+      margin-bottom: 20px;
+    }
   }
 `;
 
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
-  width: 45%;
   max-width: 611px;
-
-  h2 {
-    font-family: "Oswald";
-    font-weight: 700;
-    font-size: 38px;
-  }
-
-  section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
 
   @media (max-width: 613px) {
     width: 100%;
-
-    h2 {
-      margin-left: 12px;
-      font-size: 33px;
-    }
   }
 `;
 
@@ -47,7 +48,7 @@ const NewPostContainer = styled.div`
   border-radius: 16px;
   display: flex;
   flex-direction: row;
-  margin: 40px 0 20px 0;
+  margin: 10px 0 20px 0;
 
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 

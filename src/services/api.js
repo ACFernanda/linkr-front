@@ -20,8 +20,8 @@ export const publishComment = async (postId, formData, token) => {
   });
 };
 
-export const getComments = async (postId, token) => {
-  return api.get(`/comments/${postId}`, {
+export const getComments = async (postId, myUserId, token) => {
+  return api.get(`/comments/${postId}?id=${myUserId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

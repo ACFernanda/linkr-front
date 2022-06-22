@@ -14,7 +14,14 @@ export default function Post({ post }) {
 
   const [like, setLike] = useState(false);
   const [countLikes, setCountLikes] = useState(post.countLikes);
+
+  
+  // FIX 
   const [countComments, setCountComments] = useState(post.countComments);
+  console.log(post.countComments)
+  //
+
+
   const [tooltip, setTooltip] = useState(post.countLikes);
   const [commenting,setCommenting]=useState(false)
   // useEffect(() => {

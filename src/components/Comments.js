@@ -21,15 +21,16 @@ export default function Comments({post}) {
     promise.catch(e=>console.log(e))
   }
   async function searchComments(){
-    const promise= getComments(postId,token)
+    const promise= getComments(postId,user.id,token)
     promise.then(res=>setCommentList(res.data))  
     promise.catch(e=>console.log(e))
     
   }
    function mapComments(comment) {
-    const {id,pictureURL,userId,username,text}=comment
+    const {id,pictureURL,userId,username,text,following}=comment
     const listOwnerStatus=[]
     if(userId===postUserId){listOwnerStatus.push(<span> • post's author</span>)}
+    if(following!==null){listOwnerStatus.push(<span> • following</span>)}
     return (
      <CommentContainer key={id}>
         <Comment>

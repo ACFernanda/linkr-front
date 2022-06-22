@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect } from "react";
@@ -7,15 +7,23 @@ import ReactTooltip from "react-tooltip";
 import { dislikePost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
-
+import Comments from './Comments'
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
 
   const [like, setLike] = useState(false);
   const [countLikes, setCountLikes] = useState(post.countLikes);
-  const [tooltip, setTooltip] = useState(post.countLikes);
 
+  
+  // FIX 
+  const [countComments, setCountComments] = useState(post.countComments);
+  console.log(post.countComments)
+  //
+
+
+  const [tooltip, setTooltip] = useState(post.countLikes);
+  const [commenting,setCommenting]=useState(false)
   // useEffect(() => {
   //   let userLiked;
   //   if (post.likes.length) {
@@ -104,6 +112,7 @@ export default function Post({ post }) {
   // }
 
   return (
+    <>
     <PostContainer key={post.postId}>
       <PictureContainer countLikes={countLikes}>
         <img src={post.pictureURL} alt="" />
@@ -128,13 +137,24 @@ export default function Post({ post }) {
               <AiFillHeart style={{ color: "#AC0000" }} />
             )}
           </button>
-        </IconContext.Provider>
+          
+        
         <ReactTooltip place="bottom" type="light" effect="solid" />
-        {countLikes === 1 ? (
-          <p data-tip={tooltip}>{countLikes} like</p>
+        {countComments === 1 ? (
+          <p data-tip={tooltip}>{countComments} like</p>
         ) : (
-          <p data-tip={tooltip}>{countLikes} likes</p>
+          <p data-tip={tooltip}>{countComments} likes</p>
         )}
+        <button onClick={()=>setCommenting(!commenting)}>
+            <AiOutlineComment/>
+          </button>
+          <ReactTooltip place="bottom" type="light" effect="solid" />
+        {countLikes === 1 ? (
+          <p data-tip={tooltip}>{countLikes} comment</p>
+        ) : (
+          <p data-tip={tooltip}>{countLikes} comments</p>
+        )}
+          </IconContext.Provider>
       </PictureContainer>
       <ContentContainer>
         <Link to={`/user/${post.userId}`}>
@@ -159,7 +179,10 @@ export default function Post({ post }) {
           <ImageContainer urlImage={post.urlImage}></ImageContainer>
         </SnippetContainer>
       </ContentContainer>
+      
     </PostContainer>
+    {commenting?<Comments post={post}/>:<></>}
+    </>
   );
 }
 
@@ -171,6 +194,7 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin: 12px 0 10px 0;
+  position:relative;
   @media (max-width: 613px) {
     border-radius: 0;
   }

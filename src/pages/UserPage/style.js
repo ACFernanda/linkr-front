@@ -35,13 +35,11 @@ const Main = styled.div`
     width: 112px;
     height: 31px;
     margin-right: 5px;
-    background: #1877f2;
     border: none;
     border-radius: 5px;
     font-family: "Lato";
     font-weight: 700;
     font-size: 14px;
-    color: #ffffff;
   }
 
   section {

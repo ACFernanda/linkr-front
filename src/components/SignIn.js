@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 
-import { api } from "../services/api.js";
+import { signIn } from "../services/api.js";
 import TokenContext from "../contexts/TokenContext.js";
 import UserContext from "../contexts/UserContext.js";
 
@@ -25,11 +25,10 @@ export default function SignIn() {
         email: formData.email,
         password: formData.password,
       };
-      const response = await api.post("sign-in", body);
+      const response = await signIn(body);
       handleSuccess(response);
     } catch (error) {
-      console.log(error);
-      resetAll();
+      handleError(error);
     }
   }
 
@@ -40,6 +39,11 @@ export default function SignIn() {
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
     navigate("/timeline");
+  }
+
+  function handleError(error) {
+    alert(`Error: ${error.response.data.message}`);
+    resetAll();
   }
 
   function resetAll() {
@@ -76,7 +80,7 @@ export default function SignIn() {
           setHasSubmitted(true);
           setTimeout(() => {
             handleSignin();
-          }, getRandomInt(500, 2000));
+          }, getRandomInt(500, 1000));
         }}
       >
         <input
@@ -85,6 +89,7 @@ export default function SignIn() {
           name="email"
           value={formData.email}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
         <input
@@ -93,9 +98,10 @@ export default function SignIn() {
           name="password"
           value={formData.password}
           onChange={handleInputChange}
+          disabled={hasSubmitted}
           required
         />
-        <button type="submit" className={validateForm()}>
+        <button type="submit" className={validateForm()} disabled={hasSubmitted}>
           {!hasSubmitted ? (
             "Log In"
           ) : (
@@ -122,6 +128,10 @@ const RightSide = styled.section`
     justify-content: center;
     align-items: center;
     background-color: #333333;
+    @media (max-width: 613px) {
+      height: calc(100vh - 175px);
+      width: 100vw;
+    }
   }
   form {
     display: flex;
@@ -145,6 +155,13 @@ const RightSide = styled.section`
     ::placeholder {
       color: #9f9f9f;
     }
+    :disabled{
+      background-color: lightgray;
+    }
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
   button {
     width: 429px;
@@ -161,6 +178,14 @@ const RightSide = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    :disabled {
+      background-color: lightgray;
+    }
+    @media (max-width: 613px) {
+      width: 330px;
+      height: 55px;
+    }
   }
   h3 {
     width: 262px;
@@ -172,5 +197,12 @@ const RightSide = styled.section`
     line-height: 24px;
     text-decoration-line: underline;
     color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 613px) {
+      font-size: 17px;
+      line-height: 20px;
+    }
   }
 `;

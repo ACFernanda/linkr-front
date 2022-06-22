@@ -28,6 +28,7 @@ const Container = styled.div`
     h2 {
       margin-bottom: 20px;
     }
+  }
 `;
 
 const Main = styled.div`

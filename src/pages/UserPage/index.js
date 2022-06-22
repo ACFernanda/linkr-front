@@ -6,7 +6,7 @@ import Post from "../../components/Post";
 import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
 import UserContext from "../../contexts/UserContext";
-import { getUserPosts } from "../../services/api";
+import { getUserPosts, followUser, unfollowUser } from "../../services/api";
 import { Main, Container, Message } from "./style";
 
 export default function UserPage() {
@@ -26,17 +26,22 @@ export default function UserPage() {
 
 const UserPosts = ({ token, user }) => {
   const [userData, setUserData] = useState(null);
+  const [follow, setFollow] = useState(null);
   const { id: userId } = useParams();
-  console.log(userId, user.id);
+  console.log(follow);
 
   useEffect(() => {
     const promise = getUserPosts(userId, token);
-    promise.then((res) => setUserData(res.data));
-    promise.catch((e) =>
+    promise.then((res) => {
+      setUserData(res.data);
+      setFollow(res.data.follow);
+    });
+    promise.catch((e) => {
+      console.log(e);
       alert(
         "An error occured while trying to fetch the user's posts, please refresh the page."
-      )
-    );
+      );
+    });
   }, [userId]);
 
   if (!userData) {
@@ -58,6 +63,41 @@ const UserPosts = ({ token, user }) => {
 
   const title = `${formatUserName(userData.name)} posts`;
 
+  function toggleFollow() {
+    const promise = getUserPosts(userId, token);
+    promise.then((res) => {
+      setUserData(res.data);
+      setFollow(res.data.follow);
+    });
+    promise.catch((e) => {
+      console.log(e);
+      alert(
+        "An error occured while trying to fetch the user's posts, please refresh the page."
+      );
+    });
+
+    if (follow === true) {
+      const promise = unfollowUser({ unfollowUserId: userId }, token);
+      promise.then((res) => {
+        setFollow(!follow);
+      });
+      promise.catch((e) => {
+        console.log(e);
+        alert("Ops! Não foi possível executar a operação.");
+      });
+    }
+    if (follow === false) {
+      const promise = followUser({ followUserId: userId }, token);
+      promise.then((res) => {
+        setFollow(!follow);
+      });
+      promise.catch((e) => {
+        console.log(e);
+        alert("Ops! Não foi possível executar a operação.");
+      });
+    }
+  }
+
   if (!userData.posts.length) {
     return (
       <>
@@ -66,7 +106,14 @@ const UserPosts = ({ token, user }) => {
           {parseInt(user.id) === parseInt(userId) ? (
             <></>
           ) : (
-            <button className="follow">Follow</button>
+            <button
+              onClick={() => toggleFollow()}
+              className="follow"
+              disabled={follow === null ? true : false}
+              follow={follow}
+            >
+              Follow
+            </button>
           )}
         </div>
         <section>
@@ -84,7 +131,17 @@ const UserPosts = ({ token, user }) => {
         {parseInt(user.id) === parseInt(userId) ? (
           <></>
         ) : (
-          <button className="follow">Follow</button>
+          <button
+            onClick={() => toggleFollow()}
+            className="follow"
+            disabled={follow === null ? true : false}
+            style={{
+              background: follow === true ? "#FFFFFF" : "#1877f2",
+              color: follow === false ? "#FFFFFF" : "#1877f2",
+            }}
+          >
+            {follow ? "Unfollow" : "Follow"}
+          </button>
         )}
       </div>
       <section>

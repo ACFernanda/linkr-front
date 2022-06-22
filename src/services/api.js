@@ -13,7 +13,7 @@ export const signIn = async (formData) => {
 }
 
 export const publishComment = async (postId, formData, token) => {
-  return api.post(`/messages/${postId}`, formData, {
+  return api.post(`/comments/${postId}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -21,7 +21,7 @@ export const publishComment = async (postId, formData, token) => {
 };
 
 export const getComments = async (postId, token) => {
-  return api.get(`/messages/${postId}`, {
+  return api.get(`/comments/${postId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

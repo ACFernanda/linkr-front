@@ -27,11 +27,11 @@ export default function Comments({post}) {
     
   }
    function mapComments(comment) {
-    const {pictureURL,userId,username,text}=comment
+    const {id,pictureURL,userId,username,text}=comment
     const listOwnerStatus=[]
     if(userId===postUserId){listOwnerStatus.push(<span> • post's author</span>)}
     return (
-     <CommentContainer>
+     <CommentContainer key={id}>
         <Comment>
             <img src={pictureURL} alt="" />
             <div>

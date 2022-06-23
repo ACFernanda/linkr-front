@@ -14,8 +14,9 @@ export default function DeleteModal({postId,setDeleting,setError}){
                     <ButtonYes onClick={async()=>{
                         try{
                             await deletePost(postId,token)
-                            setDeleting(false)}
-                        catch(e){
+                            setDeleting(false)
+                            window.location.reload();
+                        }catch(e){
                             setError('It was not possible to delete the post')
                             setTimeout(()=>setError(''),4000)
                             console.log(e)

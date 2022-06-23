@@ -92,9 +92,9 @@ export default function Post({ post }) {
     try{
       setInputDisabled(true)
       await editPost(post.postId,{description:input},token)
-      defineDescriptionList(input) //gambiarra
       setEditing(false)
       setInputDisabled(false)
+      window.location.reload();
     }catch(e){
       console.log(e)
       setInputDisabled(false)

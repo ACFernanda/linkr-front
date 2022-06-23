@@ -23,7 +23,7 @@ export default function Post({ post }) {
   const [error, setError] = useState('');
   const [commenting, setCommenting] = useState(false);
 
-  const [like, setLike] = useState(false)
+  const [like, setLike] = useState(false);
   const [likes, setLikes] = useState([]);
   const [countLikes, setCountLikes] = useState(0);
   const [tooltip, setTooltip] = useState("");
@@ -36,7 +36,7 @@ export default function Post({ post }) {
     setLikes(post.likes);
     setInput(post.description);
     setCountLikes(Number(post.countLikes));
-    setCountComments(post.countComments);
+    setCountComments(Number(post.countComments));
     setTooltip("");
     setCommenting(false);
     setEditing(false);
@@ -158,6 +158,10 @@ export default function Post({ post }) {
     return tooltipText;
   }
 
+  function updateCountComments() {
+    setCountComments(countComments + 1);
+  }
+
   return (
     <>
       <PostContainer key={post.postId}>
@@ -239,7 +243,7 @@ export default function Post({ post }) {
           </ContentContainer>
         </IconContext.Provider>
       </PostContainer>
-      {commenting ? <Comments post={post} /> : <></>}
+      {commenting ? <Comments post={post} updateCountComents={updateCountComments} /> : <></>}
     </>
   );
 }
@@ -290,6 +294,7 @@ const PostContainer = styled.div`
 const PictureContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   img {
     height: 50px;
     border-radius: 50%;
@@ -308,6 +313,8 @@ const PictureContainer = styled.div`
     font-weight: 400;
     font-size: 14px;
     line-height: 16px;
+    text-align: center;
+    width: max-content;
     text-align: center;
   }
 `;

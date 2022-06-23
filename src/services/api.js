@@ -1,16 +1,17 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000" /*"https://projeto17-linkr-back.herokuapp.com/"*/,
+  //baseURL: "https://ffm-linkr.herokuapp.com",
+  baseURL: "http://localhost:5000",
 });
 
 export const signUp = async (formData) => {
   return api.post("/sign-up", formData);
-}
+};
 
 export const signIn = async (formData) => {
   return api.post("/sign-in", formData);
-}
+};
 
 export const publishComment = async (postId, formData, token) => {
   return api.post(`/comments/${postId}`, formData, {
@@ -54,6 +55,14 @@ export const deletePost = async (postId, token) => {
 
 export const getAllPosts = async (token) => {
   return api.get("/posts", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getAllFollowing = async (token) => {
+  return api.get("/follows", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiOutlineComment, AiOutlineShareAlt } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect } from "react";
@@ -8,6 +8,8 @@ import { dislikePost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
 import Comments from './Comments'
+import Shared from './Shared'
+import ShareModal from './ShareModal'
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
@@ -18,6 +20,7 @@ export default function Post({ post }) {
   const [tooltip, setTooltip] = useState("");
   const [countComments, setCountComments] = useState(0);
   const [commenting, setCommenting] = useState(false)
+  const [sharing, setSharing] = useState(false)
 
   useEffect(() => {
     setLike(post.likedByUser);
@@ -28,7 +31,7 @@ export default function Post({ post }) {
     setTooltip("");
     setCommenting(false);
   }, [post])
-
+  const [error,setError]=useState('')
 
   console.log(post.countComments)
 
@@ -108,6 +111,12 @@ export default function Post({ post }) {
 
   return (
     <>
+      {sharing?
+      <ShareModal postId={post.postId} setSharing={setSharing} setError={setError} />
+      :<></>}
+      {post.reposterId ?
+      <Shared reposterId={post.reposterId} reposterName={post.reposterName} /> 
+      : <></>}
       <PostContainer key={post.postId}>
         <PictureContainer countLikes={countLikes}>
           <img src={post.pictureURL} alt="" />
@@ -134,6 +143,11 @@ export default function Post({ post }) {
             ) : (
               <p >{countComments} comments</p>
             )}
+
+            <button onClick={() => setSharing(true)}>
+              <AiOutlineShareAlt />
+            </button>
+
           </IconContext.Provider>
         </PictureContainer>
         <ContentContainer>

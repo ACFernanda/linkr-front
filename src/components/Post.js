@@ -7,7 +7,8 @@ import ReactTooltip from "react-tooltip";
 import { dislikePost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
-import Comments from './Comments'
+import Comments from './Comments';
+
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
@@ -17,7 +18,7 @@ export default function Post({ post }) {
   const [countLikes, setCountLikes] = useState(0);
   const [tooltip, setTooltip] = useState("");
   const [countComments, setCountComments] = useState(0);
-  const [commenting, setCommenting] = useState(false)
+  const [commenting, setCommenting] = useState(false);
 
   useEffect(() => {
     setLike(post.likedByUser);

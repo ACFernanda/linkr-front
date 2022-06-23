@@ -60,14 +60,18 @@ export const getPostsByHashtag = async (word, token) => {
   });
 };
 
-export const getUsersByName = async (userFilter, token) => {
+export const getUsersByName = async (userFilter, userId, token) => {
   const lowerUserFilter = userFilter.toLowerCase();
   const route = `/users?name=${lowerUserFilter}`;
-  return api.get(route, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return api.post(
+    route,
+    { userId },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 export const getTrandings = async (token) => {

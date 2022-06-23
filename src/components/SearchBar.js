@@ -8,12 +8,14 @@ import { AiOutlineSearch } from "react-icons/ai";
 
 import { getUsersByName } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
+import UserContext from "../contexts/UserContext";
 
 const MIN_LENGTH_SEARCH = 3;
 const DEBOUNCE_TIME = 300;
 
 export default function SearchBar() {
   const { token } = useContext(TokenContext);
+  const { user } = useContext(UserContext);
   const [filteredData, setFilteredData] = useState([]);
 
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export default function SearchBar() {
       hideResults();
     } else {
       try {
-        const response = await getUsersByName(searchWord, token);
+        const response = await getUsersByName(searchWord, user.id, token);
         const users = response.data;
         setFilteredData(users);
       } catch (error) {
@@ -40,16 +42,25 @@ export default function SearchBar() {
     setFilteredData([]);
   }
 
-  const searchResults = filteredData.map((user, index) => {
+  const searchResults = filteredData.map((userData, index) => {
     return (
       <User
         key={index}
         onMouseDown={() => {
-          navigate(`/user/${user.id}`);
+          navigate(`/user/${userData.id}`);
         }}
       >
-        <img src={user.pictureURL} alt="user icon" />
-        <span>{user.name}</span>
+        <img src={userData.pictureURL} alt="user icon" />
+        <span>
+          {userData.name}{" "}
+          {userData.userId === user.id ? (
+            <span style={{ color: "#C5C5C5", fontSize: "18px" }}>
+              • following
+            </span>
+          ) : (
+            ""
+          )}
+        </span>
       </User>
     );
   });

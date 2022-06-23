@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://ffm-linkr.herokuapp.com",
+  //baseURL: "http://localhost:5000",
 });
 
 export const signUp = async (formData) => {

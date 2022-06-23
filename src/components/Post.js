@@ -1,37 +1,51 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiFillDelete, AiFillEdit, AiOutlineComment } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import ReactTooltip from "react-tooltip";
-import { dislikePost, likePost } from "../services/api";
+import { dislikePost, editPost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
+import DeleteModal from "./DeleteModal";
 import Comments from './Comments';
 
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
 
+  const inputRef = useRef();
+  const [editing, setEditing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [input, setInput] = useState('');
+  const [descriptionList, setDescriptionList] = useState([]);
+  const [inputDisabled, setInputDisabled] = useState(false);
+  const [error, setError] = useState('');
+  const [commenting, setCommenting] = useState(false);
+
   const [like, setLike] = useState(false);
   const [likes, setLikes] = useState([]);
   const [countLikes, setCountLikes] = useState(0);
   const [tooltip, setTooltip] = useState("");
   const [countComments, setCountComments] = useState(0);
-  const [commenting, setCommenting] = useState(false);
+
+  const owner = user.id === post.userId;
 
   useEffect(() => {
     setLike(post.likedByUser);
     setLikes(post.likes);
+    setInput(post.description);
     setCountLikes(Number(post.countLikes));
-    // FIX
     setCountComments(Number(post.countComments));
     setTooltip("");
     setCommenting(false);
-  }, [post])
+    setEditing(false);
+    setDeleting(false);
+    setDescriptionList([]);
+    setInputDisabled(false);
+    setError('');
+  }, [post]);
 
-
-  console.log(post.countComments)
 
   useEffect(() => {
     const usernameIndex = likes.indexOf(user.username);
@@ -45,7 +59,7 @@ export default function Post({ post }) {
 
   useEffect(() => {
     setTooltip(configureTooltip());
-  }, [likes])
+  }, [likes]);
 
   function readHashtags(word, index) {
     if (word[0] === "#") {
@@ -63,14 +77,51 @@ export default function Post({ post }) {
     }
   }
 
-  const newList = [];
-  const oldList = post.description.split(" ");
-  for (let k = 0; k < oldList.length; k++) {
-    newList.push(oldList[k]);
-    if (k !== oldList.length - 1) {
-      newList.push(" ");
+  function defineDescriptionList(frase) {
+    const newList = [];
+    const oldList = frase.split(" ");
+    for (let k = 0; k < oldList.length; k++) {
+      newList.push(oldList[k]);
+      if (k !== oldList.length - 1) {
+        newList.push(" ");
+      }
     }
+    setDescriptionList(newList);
   }
+
+  const eventHandler = (e) => {
+    if (e.key === "Enter") {
+      console.log('input após o enter:', input);
+      prepareToEdit();
+    }
+    if (e.key === "Escape") { setEditing(false); }
+  }
+
+  async function prepareToEdit() {
+    try {
+      setInputDisabled(true);
+      await editPost(post.postId, { description: input }, token);
+      setEditing(false);
+      setInputDisabled(false);
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+      setInputDisabled(false);
+      setError('It was not possible to edit the post');
+      setTimeout(() => setError(''), 4000);
+    }
+  };
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current.focus();
+      document.addEventListener('keydown', eventHandler);
+    } else { document.removeEventListener('keydown', eventHandler); }
+  }, [editing]);
+
+  useEffect(() => {
+    defineDescriptionList(post.description);
+  }, [post]);
 
   function likeAndDislike() {
     if (like === true) {
@@ -114,9 +165,12 @@ export default function Post({ post }) {
   return (
     <>
       <PostContainer key={post.postId}>
-        <PictureContainer countLikes={countLikes}>
-          <img src={post.pictureURL} alt="" />
-          <IconContext.Provider value={{ className: "react-icons" }}>
+        <IconContext.Provider value={{ className: "react-icons" }}>
+          {deleting ? <DeleteModal setError={setError} postId={post.postId} setDeleting={setDeleting} /> : <></>}
+          {error !== '' ? <ErrorMessage><p>{error}</p></ErrorMessage> : <></>}
+
+          <PictureContainer countLikes={countLikes}>
+            <img src={post.pictureURL} alt="" />
             <button onClick={likeAndDislike}>
               {like === false ? (
                 <AiOutlineHeart />
@@ -139,39 +193,87 @@ export default function Post({ post }) {
             ) : (
               <p >{countComments} comments</p>
             )}
-          </IconContext.Provider>
-        </PictureContainer>
-        <ContentContainer>
-          <Link to={`/user/${post.userId}`}>
-            <p className="username">{post.username}</p>
-          </Link>
-          <p className="description">{newList.map(readHashtags)}</p>
-          <SnippetContainer
-            onClick={() => window.open(post.url, "_blank").focus()}
-          >
-            <InfoContainer>
-              <p className="title">{post.urlTitle}</p>
-              <p className="url-description">{post.urlDescription}</p>
-              <a
-                href={post.url}
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-              >
-                {post.url}
-              </a>
-            </InfoContainer>
-            <ImageContainer urlImage={post.urlImage}></ImageContainer>
-          </SnippetContainer>
-        </ContentContainer>
+          </PictureContainer>
+          <ContentContainer>
+            <FirstLine>
+              <Link to={`/user/${post.userId}`}>
+                <p className="username">{post.username}</p>
+              </Link>
+              <span>
+                {owner ?
+                  <button onClick={() => { if (editing) { prepareToEdit() } setEditing(!editing) }}>
+                    <AiFillEdit />
+                  </button>
+                  : <></>}
+                {owner ?
+                  <button onClick={() => setDeleting(true)}>
+                    <AiFillDelete />
+                  </button>
+                  : <></>}
+              </span>
+            </FirstLine>
 
+            {editing ?
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={e => { setInput(e.target.value); console.log(input) }}
+                disabled={inputDisabled ? true : false}>
+              </input>
+              :
+              <p className="description">{descriptionList.map(readHashtags)}</p>
+            }
+            <SnippetContainer
+              onClick={() => window.open(post.url, "_blank").focus()}
+            >
+              <InfoContainer>
+                <p className="title">{post.urlTitle}</p>
+                <p className="url-description">{post.urlDescription}</p>
+                <a
+                  href={post.url}
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
+                >
+                  {post.url}
+                </a>
+              </InfoContainer>
+              <ImageContainer urlImage={post.urlImage}></ImageContainer>
+            </SnippetContainer>
+          </ContentContainer>
+        </IconContext.Provider>
       </PostContainer>
       {commenting ? <Comments post={post} updateCountComents={updateCountComments} /> : <></>}
     </>
   );
 }
 
+const ErrorMessage = styled.div`
+  position:absolute;
+  top:-19px;right:0;
+  p{
+    color: orange;
+      font-family: "Lato";
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 16px;
+      text-align: center;
+  }
+`;
+
+const FirstLine = styled.div`
+  width:100%;
+  display:flex;justify-content:space-between;
+  button {
+    background-color: #171717;
+    color: #ffffff;
+    border: none;
+    font-size: 20px;
+  }
+`;
+
 const PostContainer = styled.div`
+  position:relative;
   padding: 12px;
   width: 100%;
   background-color: #171717;
@@ -182,7 +284,11 @@ const PostContainer = styled.div`
   position:relative;
   @media (max-width: 613px) {
     border-radius: 0;
-  }
+  };
+
+  .react-icons {
+    cursor: pointer;
+  };
 `;
 
 const PictureContainer = styled.div`
@@ -241,6 +347,14 @@ const ContentContainer = styled.div`
   }
   .hashtag {
     font-weight: 900;
+  }
+  input{
+    padding-left:9px;
+    border:0;
+    width: 100%;
+    height: 44px;
+    border-radius:10px;
+    margin-bottom:12px;
   }
 `;
 

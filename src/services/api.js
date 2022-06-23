@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://ffm-linkr.herokuapp.com",
-  //baseURL: "http://localhost:5000",
+  //baseURL: "https://ffm-linkr.herokuapp.com",
+  baseURL: "http://localhost:5000",
 });
 
 export const signUp = async (formData) => {
@@ -31,6 +31,22 @@ export const getComments = async (postId, myUserId, token) => {
 
 export const publishPost = async (formData, token) => {
   await api.post("/posts", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const editPost = async (postId, formData, token) => {
+  await api.put(`/posts/${postId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deletePost = async (postId, token) => {
+  await api.delete(`/posts/${postId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

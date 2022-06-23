@@ -88,27 +88,11 @@ export default function Post({ post }) {
     }
     setDescriptionList(newList);
   }
-<<<<<<< HEAD
-  
-  async function prepareToEdit(){
-    try{
-      setInputDisabled(true)
-      await editPost(post.postId,{description:input},token)
-      setEditing(false)
-      setInputDisabled(false)
-      window.location.reload();
-    }catch(e){
-      console.log(e)
-      setInputDisabled(false)
-      setError('It was not possible to edit the post')
-      setTimeout(()=>setError(''),4000)
-=======
 
   const eventHandler = (e) => {
     if (e.key === "Enter") {
       console.log('input após o enter:', input);
       prepareToEdit();
->>>>>>> 3c8c2c138e0eb0b3f043f3866f271f3eaa3c6357
     }
     if (e.key === "Escape") { setEditing(false); }
   }
@@ -117,9 +101,9 @@ export default function Post({ post }) {
     try {
       setInputDisabled(true);
       await editPost(post.postId, { description: input }, token);
-      defineDescriptionList(input); //gambiarra
       setEditing(false);
       setInputDisabled(false);
+      window.location.reload();
     } catch (e) {
       console.log(e);
       setInputDisabled(false);

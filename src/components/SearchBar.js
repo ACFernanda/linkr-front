@@ -53,7 +53,7 @@ export default function SearchBar() {
         <img src={userData.pictureURL} alt="user icon" />
         <span>
           {userData.name}{" "}
-          {userData.followers[0] === user.id ? (
+          {userData.followers.includes(user.id) ? (
             <span style={{ color: "#C5C5C5", fontSize: "18px" }}>
               • following
             </span>

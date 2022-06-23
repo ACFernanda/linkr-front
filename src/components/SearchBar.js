@@ -27,7 +27,7 @@ export default function SearchBar() {
       hideResults();
     } else {
       try {
-        const response = await getUsersByName(searchWord, user.id, token);
+        const response = await getUsersByName(searchWord, token);
         const users = response.data;
         setFilteredData(users);
       } catch (error) {
@@ -53,7 +53,7 @@ export default function SearchBar() {
         <img src={userData.pictureURL} alt="user icon" />
         <span>
           {userData.name}{" "}
-          {userData.userId === user.id ? (
+          {userData.followers[0] === user.id ? (
             <span style={{ color: "#C5C5C5", fontSize: "18px" }}>
               • following
             </span>

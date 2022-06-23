@@ -6,69 +6,71 @@ import { IconContext } from "react-icons";
 import TokenContext from "../contexts/TokenContext";
 import UserContext from "./../contexts/UserContext.js";
 import { AiOutlineSend } from "react-icons/ai";
-export default function Comments({post}) {
-  const { token } = useContext(TokenContext);
-  const { user } = useContext(UserContext);
-  const {postId,userId:postUserId}=post
-  const [commentList, setCommentList] = useState([]);
-  const [input,setInput]=useState('')
-  async function sendComment(){
-    const promise= publishComment(postId,{text:input},token)
-    promise.then(()=>{
-        searchComments()
-        setInput('')
-    })  
-    promise.catch(e=>console.log(e))
-  }
-  async function searchComments(){
-    const promise= getComments(postId,user.id,token)
-    promise.then(res=>setCommentList(res.data))  
-    promise.catch(e=>console.log(e))
-    
-  }
-   function mapComments(comment) {
-    const {id,pictureURL,userId,username,text,following}=comment
-    const listOwnerStatus=[]
-    if(userId===postUserId){listOwnerStatus.push(<span> • post's author</span>)}
-    if(following!==null){listOwnerStatus.push(<span> • following</span>)}
+export default function Comments({ post, updateCountComents }) {
+    const { token } = useContext(TokenContext);
+    const { user } = useContext(UserContext);
+    const { postId, userId: postUserId } = post
+    const [commentList, setCommentList] = useState([]);
+    const [input, setInput] = useState('')
+
+    async function sendComment() {
+        const promise = publishComment(postId, { text: input }, token)
+        promise.then(() => {
+            searchComments();
+            updateCountComents();
+            setInput('');
+        })
+        promise.catch(e => console.log(e));
+    }
+    async function searchComments() {
+        const promise = getComments(postId, user.id, token);
+        promise.then(res => setCommentList(res.data));
+        promise.catch(e => console.log(e));
+
+    }
+    function mapComments(comment) {
+        const { id, pictureURL, userId, username, text, following } = comment;
+        const listOwnerStatus = [];
+        if (userId === postUserId) { listOwnerStatus.push(<span> • post's author</span>) };
+        if (following !== null) { listOwnerStatus.push(<span> • following</span>) };
+        return (
+            <CommentContainer key={id}>
+                <Comment>
+                    <img src={pictureURL} alt="" />
+                    <div>
+                        <Link to={`/user/${userId}`}>
+                            <h4 className="username">{username}{listOwnerStatus.map(item => item)}</h4>
+                        </Link>
+                        <p>{text}</p>
+                    </div>
+                </Comment>
+                <div className="divisory"></div>
+            </CommentContainer>
+        );
+    }
+    useEffect(() => { searchComments() }, []);
     return (
-     <CommentContainer key={id}>
-        <Comment>
-            <img src={pictureURL} alt="" />
-            <div>
-                <Link to={`/user/${userId}`}>
-                    <h4 className="username">{username}{listOwnerStatus.map(item=>item)}</h4>
-                </Link>
-                <p>{text}</p>
-            </div>
-        </Comment>
-        <div className="divisory"></div>
-     </CommentContainer>
+        <Container>
+            <IconContext.Provider value={{ className: "react-icons" }}>
+                <div className="emptySpace"></div>
+                {commentList.map(mapComments)}
+                <NewMessage>
+                    <img src={user.pictureURL} alt="" />
+                    <div>
+                        <input value={input}
+                            onChange={e => setInput(e.target.value)}
+                            placeholder='write a comment...'
+                        ></input>
+                        <button onClick={sendComment}
+                        ><AiOutlineSend /></button>
+                    </div>
+
+                </NewMessage>
+            </IconContext.Provider>
+        </Container>
     );
-  }
-  useEffect(() => {searchComments()}, []);
-  return (
-    <Container>
-        <IconContext.Provider value={{ className: "react-icons" }}>
-        <div className="emptySpace"></div>
-        {commentList.map(mapComments)}
-        <NewMessage>
-            <img src={user.pictureURL} alt="" />
-            <div>
-                <input value={input}
-                    onChange={e=>setInput(e.target.value)}
-                    placeholder='write a comment...'
-                ></input>
-                <button onClick={sendComment}
-                ><AiOutlineSend /></button>
-            </div>
-            
-        </NewMessage>
-        </IconContext.Provider>
-    </Container>
-  );
 }
-const CommentContainer=styled.div`
+const CommentContainer = styled.div`
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -78,7 +80,7 @@ align-items:center;
     width:calc(100% - 40px)
 }
 `
-const Comment=styled.div`
+const Comment = styled.div`
 width:100%;padding:25px;
 display:flex;align-items:center;
 h4{
@@ -107,7 +109,7 @@ line-height: 17px;
 color: #565656;
 }
 `
-const Container=styled.div`
+const Container = styled.div`
 width: 100%;
 margin:-35px 0 10px 0;
 background-color: #1E1E1E;
@@ -119,7 +121,7 @@ img {
     margin-right:15px
   }
 `
-const NewMessage=styled.div`
+const NewMessage = styled.div`
 width:100%;padding:25px;
 display:flex;align-items:center;justify-content:space-between;
 input{

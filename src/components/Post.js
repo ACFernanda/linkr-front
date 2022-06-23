@@ -25,7 +25,7 @@ export default function Post({ post }) {
     setLikes(post.likes);
     setCountLikes(Number(post.countLikes));
     // FIX
-    setCountComments(post.countComments);
+    setCountComments(Number(post.countComments));
     setTooltip("");
     setCommenting(false);
   }, [post])
@@ -107,6 +107,10 @@ export default function Post({ post }) {
     return tooltipText;
   }
 
+  function updateCountComments() {
+    setCountComments(countComments + 1);
+  }
+
   return (
     <>
       <PostContainer key={post.postId}>
@@ -162,7 +166,7 @@ export default function Post({ post }) {
         </ContentContainer>
 
       </PostContainer>
-      {commenting ? <Comments post={post} /> : <></>}
+      {commenting ? <Comments post={post} updateCountComents={updateCountComments} /> : <></>}
     </>
   );
 }
@@ -184,6 +188,7 @@ const PostContainer = styled.div`
 const PictureContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   img {
     height: 50px;
     border-radius: 50%;
@@ -202,6 +207,8 @@ const PictureContainer = styled.div`
     font-weight: 400;
     font-size: 14px;
     line-height: 16px;
+    text-align: center;
+    width: max-content;
     text-align: center;
   }
 `;

@@ -5,15 +5,19 @@ import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import UserContext from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import TokenContext from "../contexts/TokenContext";
+import { desactivateToken } from "./../services/api";
 
 export default function Header() {
   const [visibility, setVisibility] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const { token } = useContext(TokenContext);
 
   const navigate = useNavigate();
 
   function logout() {
     navigate("/");
+    desactivateToken(token);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   }

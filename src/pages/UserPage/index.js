@@ -1,7 +1,9 @@
 import { useState, useEffect, useContext } from "react";
+import InfiniteScroll from "react-infinite-scroller";
 import { useParams } from "react-router-dom";
 
 import Header from "../../components/Header";
+import LoadingMorePost from "../../components/LoadingMorePost";
 import Post from "../../components/Post";
 import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
@@ -27,13 +29,18 @@ export default function UserPage() {
 const UserPosts = ({ token, user }) => {
   const [userData, setUserData] = useState(null);
   const [follow, setFollow] = useState(null);
+  const [offset, setOffset] = useState(0);
+  const [hasMorePost, setHasMorePosts] = useState(true);
   const { id: userId } = useParams();
 
   useEffect(() => {
-    const promise = getUserPosts(userId, token);
+    const promise = getUserPosts(userId, offset, token);
     promise.then((res) => {
       setUserData(res.data);
       setFollow(res.data.follow);
+      if (res.data.posts.length < 10) {
+        setHasMorePosts(false);
+      }
     });
     promise.catch((e) => {
       console.log(e);
@@ -130,6 +137,26 @@ const UserPosts = ({ token, user }) => {
     );
   }
 
+  function getMorePosts() {
+    const promise = getUserPosts(userId, offset + 1, token);
+    promise.then((res) => {
+      const newPosts = res.data.posts;
+      const updatedPosts = [...userData.posts, ...newPosts];
+      const updateUser = {...userData, posts: updatedPosts};
+      setUserData(updateUser);
+      setOffset(offset + 1);
+      if (newPosts.length < 10) {
+        setHasMorePosts(false);
+      }
+    });
+    promise.catch((e) => {
+      console.log(e);
+      alert(
+        "An error occured while trying to fetch the user's posts, please refresh the page."
+      );
+    });
+  }
+
   return (
     <>
       <div className="name-container">
@@ -154,13 +181,20 @@ const UserPosts = ({ token, user }) => {
         )}
       </div>
       <section>
-        <div className="posts">
-          {userData.posts.map((post, index) => (
-            <Post post={post} key={index} />
-          ))}
-        </div>
-        <Trending />
-      </section>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={() => { setTimeout(getMorePosts, 2000) }}
+          hasMore={hasMorePost}
+          loader={<LoadingMorePost />}
+            >
+            <div className="posts">
+              {userData.posts.map((post, index) => (
+                <Post post={post} key={index} />
+              ))}
+            </div>
+        </InfiniteScroll>
+      <Trending />
+    </section>
     </>
   );
 };

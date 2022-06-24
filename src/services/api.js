@@ -95,8 +95,8 @@ export const getTrandings = async (token) => {
   });
 };
 
-export const getUserPosts = async (userId, token) => {
-  const route = `/users/${userId}`;
+export const getUserPosts = async (userId, offset, token) => {
+  const route = `/users/${userId}?offset=${offset}`;
   return api.get(route, {
     headers: {
       Authorization: `Bearer ${token}`,

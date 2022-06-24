@@ -9,8 +9,6 @@ export default function Trending() {
   const [trendingList, setTrendingList] = useState([]);
   
   const location = useLocation();
-  console.log(location.pathname);
-  console.log("render tranding");
   
   function renderTrendings(item) {
     return (
@@ -23,10 +21,8 @@ export default function Trending() {
   }
   useEffect(() => {
     (async () => {
-      console.log('Requisitando as hashtags!');
       const response = await getTrandings(token);
       setTrendingList(response.data);
-      console.log(response.data);
     })();
   }, [location.pathname]);
 

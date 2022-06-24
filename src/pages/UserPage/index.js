@@ -128,32 +128,33 @@ const UserPosts = ({ token, user }) => {
 
   return (
     <>
-      <div className="name-container">
-        <h2>{title}</h2>
-        {parseInt(user.id) === parseInt(userId) ? (
-          <></>
-        ) : (
-          <button
-            onClick={() => toggleFollow()}
-            className="follow"
-            disabled={follow === null ? true : false}
-            style={{
-              background: follow === true ? "#FFFFFF" : "#1877f2",
-              color: follow === false ? "#FFFFFF" : "#1877f2",
-            }}
-          >
-            {follow ? "Unfollow" : "Follow"}
-          </button>
-        )}
-      </div>
-      <section>
-        <div className="posts">
-          {userData.posts.map((post, index) => (
-            <Post post={post} key={index} />
-          ))}
+      
+        <div className="name-container">
+          <h2>{title}</h2>
+          {parseInt(user.id) === parseInt(userId) ? (
+            <></>
+          ) : (
+            <button
+              onClick={() => toggleFollow()}
+              className="follow"
+              disabled={follow === null ? true : false}
+              style={{
+                background: follow === true ? "#FFFFFF" : "#1877f2",
+                color: follow === false ? "#FFFFFF" : "#1877f2",
+              }}
+            >
+              {follow ? "Unfollow" : "Follow"}
+            </button>
+          )}
         </div>
-        <Trending />
-      </section>
+        <section>
+          <div className="posts">
+            {userData.posts.map((post, index) => (
+              <Post post={post} key={index} />
+            ))}
+          </div>
+          <Trending />
+        </section>
     </>
   );
 };

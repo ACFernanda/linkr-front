@@ -108,8 +108,7 @@ export default function Post({ post }) {
   useEffect(() => {
     if (editing) {
       inputRef.current.focus();
-    } else {
-      setInput(post.description);
+      setInput(descriptionList.join(''));
     }
   }, [editing]);
 

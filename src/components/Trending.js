@@ -3,9 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getTrandings } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
+
 export default function Trending() {
   const { token } = useContext(TokenContext);
   const [trendingList, setTrendingList] = useState([]);
+  
+  console.log("render tranding");
+  
   function renderTrendings(item) {
     return (
       <div key={item.name}>
@@ -17,10 +21,13 @@ export default function Trending() {
   }
   useEffect(() => {
     (async () => {
+      console.log('Requisitando as hashtags!');
       const response = await getTrandings(token);
       setTrendingList(response.data);
+      console.log(response.data);
     })();
   }, []);
+
   return (
     <Container>
       <h3>trending</h3>

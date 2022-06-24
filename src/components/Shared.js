@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useContext } from "react";
 
 import UserContext from "./../contexts/UserContext.js";
-
+import { IconContext } from "react-icons";
+import { AiOutlineShareAlt } from "react-icons/ai";
 
 export default function Shared({reposterId,reposterName}){
     const { user } = useContext(UserContext);
@@ -11,6 +12,9 @@ export default function Shared({reposterId,reposterName}){
     return(
         <Container>
             <div>
+                <IconContext.Provider value={{ className: "react-icons" }}>
+                    <AiOutlineShareAlt/>
+                </IconContext.Provider>
                 <h1>Re-Posted by 
                     <Link to={`/user/${reposterId}`}>
                         <span> {myShare?'you':reposterName}</span>
@@ -26,6 +30,8 @@ margin: 15px 0 -35px 0;
 background-color: #1E1E1E;
 border-radius: 16px;
 padding:15px;
+color: #ffffff;
+    font-size: 13px;
 h1{
     font-family: 'Lato';
     font-style: normal;
@@ -33,8 +39,10 @@ h1{
     font-size: 11px;
     line-height: 13px;
     color: #FFFFFF;
+    margin-left:5px
 }
 span{
     font-weight: 700;
 }
+div{display:flex;align-items:center}
 `

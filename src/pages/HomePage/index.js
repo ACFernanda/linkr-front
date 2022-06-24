@@ -5,7 +5,7 @@ import Post from "../../components/Post";
 import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
 import UserContext from "../../contexts/UserContext";
-import { getAllPosts, publishPost } from "../../services/api";
+import { getAllPosts, publishPost, getAllFollowing } from "../../services/api";
 import {
   Main,
   Container,
@@ -38,12 +38,21 @@ const HomePage = () => {
 
 const RenderPosts = ({ token }) => {
   const [posts, setPosts] = useState();
+  const [following, setFollowing] = useState();
 
   useEffect(() => {
     (() => {
-      const response = getAllPosts(token);
-      response.then((res) => setPosts(res.data));
-      response.catch((e) =>
+      const postsResponse = getAllPosts(token);
+      postsResponse.then((res) => setPosts(res.data));
+      postsResponse.catch((e) =>
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page."
+        )
+      );
+
+      const followingResponse = getAllFollowing(token);
+      followingResponse.then((res) => setFollowing(res.data));
+      followingResponse.catch((e) =>
         alert(
           "An error occured while trying to fetch the posts, please refresh the page."
         )
@@ -51,9 +60,14 @@ const RenderPosts = ({ token }) => {
     })();
   }, []);
 
-  if (!posts) return <Message>Loading...</Message>;
+  if (!posts || !following) return <Message>Loading...</Message>;
 
-  if (!posts.length) return <Message>There are no posts yet</Message>;
+  if (!following.length)
+    return (
+      <Message>You don't follow anyone yet. Search for new friends!</Message>
+    );
+
+  if (!posts.length) return <Message>No posts found from your friends</Message>;
 
   return posts.map((post, index) => <Post post={post} key={index} />);
 };

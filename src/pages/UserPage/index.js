@@ -7,7 +7,7 @@ import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
 import UserContext from "../../contexts/UserContext";
 import { getUserPosts, followUser, unfollowUser } from "../../services/api";
-import { Main, Container, Message } from "./style";
+import { Main, Container, UserTitle, Message } from "./style";
 
 export default function UserPage() {
   const { token } = useContext(TokenContext);
@@ -61,6 +61,7 @@ const UserPosts = ({ token, user }) => {
   }
 
   const title = `${formatUserName(userData.name)} posts`;
+  const photo = userData.userPhoto;
 
   function toggleFollow() {
     const promise = getUserPosts(userId, token);
@@ -101,7 +102,10 @@ const UserPosts = ({ token, user }) => {
     return (
       <>
         <div className="name-container">
-          <h2>{title}</h2>
+          <UserTitle>
+            <img src={photo} alt="user's photo" />
+            <h2>{title}</h2>
+          </UserTitle>
           {parseInt(user.id) === parseInt(userId) ? (
             <></>
           ) : (
@@ -129,7 +133,10 @@ const UserPosts = ({ token, user }) => {
   return (
     <>
       <div className="name-container">
-        <h2>{title}</h2>
+        <UserTitle>
+          <img src={photo} alt="user's photo" />
+          <h2>{title}</h2>
+        </UserTitle>
         {parseInt(user.id) === parseInt(userId) ? (
           <></>
         ) : (

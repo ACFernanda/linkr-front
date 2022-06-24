@@ -25,12 +25,6 @@ const Main = styled.div`
     margin-bottom: 40px;
   }
 
-  h2 {
-    font-family: "Oswald";
-    font-weight: 700;
-    font-size: 38px;
-  }
-
   button.follow {
     width: 112px;
     height: 31px;
@@ -48,7 +42,28 @@ const Main = styled.div`
 
   @media (max-width: 613px) {
     width: 100%;
+  }
+`;
 
+const UserTitle = styled.div`
+  display: flex;
+  align-items: center;
+  
+  img {
+    height: 50px;
+    max-width: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  h2 {
+    font-family: "Oswald";
+    font-weight: 700;
+    font-size: 38px;
+    margin-left: 18px;
+  }
+
+  @media (max-width: 613px) {
     h2 {
       margin-left: 12px;
       font-size: 33px;
@@ -66,4 +81,4 @@ const Message = styled.span`
   }
 `;
 
-export { Main, Container, Message };
+export { Main, Container, UserTitle, Message };

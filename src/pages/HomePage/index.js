@@ -5,6 +5,7 @@ import Post from "../../components/Post";
 import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
 import UserContext from "../../contexts/UserContext";
+import InfiniteScroll from "react-infinite-scroller";
 import { getAllPosts, publishPost, getAllFollowing } from "../../services/api";
 import {
   Main,
@@ -14,6 +15,7 @@ import {
   InputsContainer,
   Message,
 } from "./style";
+import LoadingMorePost from "../../components/LoadingMorePost";
 
 const HomePage = () => {
   const { token } = useContext(TokenContext);
@@ -39,11 +41,17 @@ const HomePage = () => {
 const RenderPosts = ({ token }) => {
   const [posts, setPosts] = useState();
   const [following, setFollowing] = useState();
-
+  const [offset, setOffset] = useState(0);
+  const [hasMorePost, setHasMorePosts] = useState(true);
   useEffect(() => {
     (() => {
-      const postsResponse = getAllPosts(token);
-      postsResponse.then((res) => setPosts(res.data));
+      const postsResponse = getAllPosts(offset, token);
+      postsResponse.then((res) => {
+        setPosts(res.data)
+        if(res.data.length < 10) {
+          setHasMorePosts(false);
+        }
+      });
       postsResponse.catch((e) =>
         alert(
           "An error occured while trying to fetch the posts, please refresh the page."
@@ -60,6 +68,23 @@ const RenderPosts = ({ token }) => {
     })();
   }, []);
 
+  
+  function getMorePosts() {
+    const postsResponse = getAllPosts(offset + 1, token);
+    postsResponse.then((res) => {
+      setPosts([...posts, ...res.data]);
+      setOffset(offset + 1);
+      if (res.data.length < 10) {
+        setHasMorePosts(false);
+      }
+    });
+    postsResponse.catch((e) =>
+      alert(
+        "An error occured while trying to fetch the posts, please refresh the page."
+      )
+    );
+  }
+  
   if (!posts || !following) return <Message>Loading...</Message>;
 
   if (!following.length)
@@ -69,7 +94,16 @@ const RenderPosts = ({ token }) => {
 
   if (!posts.length) return <Message>No posts found from your friends</Message>;
 
-  return posts.map((post, index) => <Post post={post} key={index} />);
+  return (
+    <InfiniteScroll
+      pageStart={0}
+      loadMore={() => {setTimeout(getMorePosts, 2000)}}
+      hasMore={hasMorePost}
+      loader={<LoadingMorePost />}
+    >
+      {posts.map((post, index) => <Post post={post} key={index} />)}
+    </InfiniteScroll>
+  )
 };
 
 const NewPost = ({ token, user }) => {

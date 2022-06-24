@@ -53,8 +53,8 @@ export const deletePost = async (postId, token) => {
   });
 };
 
-export const getAllPosts = async (token) => {
-  return api.get("/posts", {
+export const getAllPosts = async (offset, token) => {
+  return api.get(`/posts?offset=${offset}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

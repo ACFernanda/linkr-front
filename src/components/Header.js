@@ -47,7 +47,7 @@ export default function Header() {
 
   return (
     <Container>
-      <p>linkr</p>
+      <p onClick={() => navigate("/timeline")}>linkr</p>
       <SearchBar />
       <section>
         <IconContext.Provider value={{ className: "react-icons" }}>
@@ -91,6 +91,7 @@ const Container = styled.div`
     color: #ffffff;
     font-size: 50px;
     letter-spacing: 0.05em;
+    cursor: pointer;
   }
 
   .search {

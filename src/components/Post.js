@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { AiOutlineHeart, AiFillHeart, AiFillDelete, AiFillEdit, AiOutlineComment } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiFillDelete, AiFillEdit, AiOutlineComment, AiOutlineShareAlt } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -7,6 +7,8 @@ import ReactTooltip from "react-tooltip";
 import { dislikePost, editPost, likePost } from "../services/api";
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
+import Shared from './Shared'
+import ShareModal from './ShareModal'
 import DeleteModal from "./DeleteModal";
 import Comments from './Comments';
 
@@ -21,13 +23,15 @@ export default function Post({ post }) {
   const [descriptionList, setDescriptionList] = useState([]);
   const [inputDisabled, setInputDisabled] = useState(false);
   const [error, setError] = useState('');
-  const [commenting, setCommenting] = useState(false);
 
   const [like, setLike] = useState(false);
   const [likes, setLikes] = useState([]);
   const [countLikes, setCountLikes] = useState(0);
   const [tooltip, setTooltip] = useState("");
   const [countComments, setCountComments] = useState(0);
+  const [countShares, setCountShares] = useState(0);
+  const [commenting, setCommenting] = useState(false)
+  const [sharing, setSharing] = useState(false)
 
   const owner = user.id === post.userId;
 
@@ -37,6 +41,7 @@ export default function Post({ post }) {
     setInput(post.description);
     setCountLikes(Number(post.countLikes));
     setCountComments(Number(post.countComments));
+    setCountShares(Number(post.countShares))
     setTooltip("");
     setCommenting(false);
     setEditing(false);
@@ -168,6 +173,12 @@ export default function Post({ post }) {
 
   return (
     <>
+      {sharing?
+      <ShareModal postId={post.postId} setSharing={setSharing} setError={setError} />
+      :<></>}
+      {post.reposterId ?
+      <Shared reposterId={post.reposterId} reposterName={post.reposterName} /> 
+      : <></>}
       <PostContainer key={post.postId}>
         <IconContext.Provider value={{ className: "react-icons" }}>
           {deleting ? <DeleteModal setError={setError} postId={post.postId} setDeleting={setDeleting} /> : <></>}
@@ -196,6 +207,14 @@ export default function Post({ post }) {
               <p >{countComments} comment</p>
             ) : (
               <p >{countComments} comments</p>
+            )}
+            <button onClick={() => setSharing(true)}>
+              <AiOutlineShareAlt />
+            </button>
+            {countShares === 1 ? (
+              <p >{countShares} re-post</p>
+            ) : (
+              <p >{countShares} re-posts</p>
             )}
           </PictureContainer>
           <ContentContainer>
@@ -303,6 +322,8 @@ const PictureContainer = styled.div`
   img {
     height: 50px;
     border-radius: 50%;
+    max-width: 50px;
+    object-fit:cover;
   }
   button {
     margin-top: 12px;

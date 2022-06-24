@@ -1,39 +1,31 @@
 import styled from "styled-components";
-import { deletePost } from "../services/api";
+import { sharePost } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
-export default function DeleteModal({ postId, setDeleting, setError }) {
+
+export default function ShareModal({ postId, setSharing, setError }) {
     const { token } = useContext(TokenContext);
-    const [loading,setLoading]=useState(false)
     return (
         <Overlay>
-            {loading?
             <Content>
-                <h1>Loading...</h1>
-            </Content>
-            :
-            <Content>
-                <h1>Are you sure you want to delete this post?</h1>
+                <h1>Do you want to re-post this link?</h1>
                 <div>
-                    <ButtonNo onClick={()=>setDeleting(false)}><p>No, go back</p></ButtonNo>
+                    <ButtonNo onClick={()=>setSharing(false)}><p>No, cancel</p></ButtonNo>
                     <ButtonYes onClick={async()=>{
                         try{
-                            setLoading(true)
-                            await deletePost(postId,token)
-                            setDeleting(false)
-                            setLoading(false)
+                            await sharePost(postId,token)
+                            setSharing(false)
                             window.location.reload();
                         }catch(e){
-                            setError('It was not possible to delete the post')
+                            setError('It was not possible to share the post')
                             setTimeout(() => setError(''), 4000)
                             console.log(e)
-                            setDeleting(false)
+                            setSharing(false)
                         }
-                    }}><p>Yes, delete it</p></ButtonYes>
+                    }}><p>Yes, share!</p></ButtonYes>
                 </div>
-            </Content>}
-
+            </Content>
         </Overlay>
     )
 }

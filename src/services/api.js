@@ -13,6 +13,14 @@ export const signIn = async (formData) => {
   return api.post("/sign-in", formData);
 };
 
+export const sharePost = async (postId,token)=> {
+  return api.post(`/shares/${postId}`, {} , {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 export const publishComment = async (postId, formData, token) => {
   return api.post(`/comments/${postId}`, formData, {
     headers: {

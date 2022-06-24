@@ -13,7 +13,8 @@ export default function Comments({ post, updateCountComents }) {
     const [commentList, setCommentList] = useState([]);
     const [input, setInput] = useState('')
 
-    async function sendComment() {
+    async function sendComment(event) {
+        event.preventDefault()
         const promise = publishComment(postId, { text: input }, token)
         promise.then(() => {
             searchComments();
@@ -56,15 +57,15 @@ export default function Comments({ post, updateCountComents }) {
                 {commentList.map(mapComments)}
                 <NewMessage>
                     <img src={user.pictureURL} alt="" />
-                    <div>
-                        <input value={input}
-                            onChange={e => setInput(e.target.value)}
-                            placeholder='write a comment...'
-                        ></input>
-                        <button onClick={sendComment}
-                        ><AiOutlineSend /></button>
-                    </div>
-
+                    <form onSubmit={sendComment}>
+                        <div>
+                            <input value={input}
+                                onChange={e => setInput(e.target.value)}
+                                placeholder='write a comment...'
+                            ></input>
+                            <button type='submit'><AiOutlineSend /></button>
+                        </div>
+                    </form>
                 </NewMessage>
             </IconContext.Provider>
         </Container>
@@ -143,6 +144,10 @@ button{
 }
 div{
     position:relative;
+    width: 100%;
+    height: 39px;
+}
+form{
     width: calc(100% - 50px);
     height: 39px;
 }

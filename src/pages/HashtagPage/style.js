@@ -34,6 +34,14 @@ const Container = styled.div`
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
+  width: 100%;
+
+  img {
+    height: 50px;
+    max-width: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
   h2 {
     font-family: "Oswald";

@@ -34,7 +34,7 @@ const Container = styled.div`
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
-  max-width: 611px;
+  width: 100%;
 
   .new-posts {
     color: #ffffff;

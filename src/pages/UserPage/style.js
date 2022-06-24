@@ -60,6 +60,7 @@ const Main = styled.div`
 const Message = styled.span`
   font-family: "Oswald";
   font-size: 30px;
+  width: 100%;
 
   @media (max-width: 613px) {
     font-size: 20px;

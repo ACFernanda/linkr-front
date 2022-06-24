@@ -1,22 +1,49 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { IconContext } from "react-icons";
 import styled from "styled-components";
 import SearchBar from "./SearchBar";
 import UserContext from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import TokenContext from "../contexts/TokenContext";
+import { desactivateToken } from "./../services/api";
 
 export default function Header() {
+  const { user } = useContext(UserContext);
+  const { token } = useContext(TokenContext);
   const [visibility, setVisibility] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+
+  let useClickOutside = (handler) => {
+    let domNode = useRef();
+
+    useEffect(() => {
+      let maybeHandler = (e) => {
+        if (!domNode.current.contains(e.target)) {
+          handler();
+          setVisibility(!visibility);
+        }
+      };
+
+      document.addEventListener("mousedown", handler);
+
+      return () => {
+        document.removeEventListener("mousedown", handler);
+      };
+    });
+  };
 
   const navigate = useNavigate();
 
   function logout() {
     navigate("/");
+    desactivateToken(token);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   }
+
+  let domNode = useClickOutside(() => {
+    setVisibility(false);
+  });
 
   return (
     <Container>
@@ -33,7 +60,11 @@ export default function Header() {
           src={user.pictureURL}
           alt="profile-pic"
         />
-        <Logout onClick={() => logout()} visibility={visibility.toString()}>
+        <Logout
+          ref={domNode}
+          onMouseDown={() => logout()}
+          visibility={visibility.toString()}
+        >
           <p>Logout</p>
         </Logout>
       </section>
@@ -89,7 +120,9 @@ const Container = styled.div`
     }
     img {
       height: 40px;
+      max-width: 40px;
       border-radius: 50%;
+      object-fit: cover;
     }
   }
 `;

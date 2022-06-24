@@ -143,3 +143,15 @@ export const unfollowUser = async (formData, token) => {
     },
   });
 };
+
+export const desactivateToken = async (token) => {
+  await api.patch(
+    "/sessions",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

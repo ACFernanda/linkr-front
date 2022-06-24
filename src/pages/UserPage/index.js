@@ -7,7 +7,7 @@ import Trending from "../../components/Trending";
 import TokenContext from "../../contexts/TokenContext";
 import UserContext from "../../contexts/UserContext";
 import { getUserPosts, followUser, unfollowUser } from "../../services/api";
-import { Main, Container, Message } from "./style";
+import { Main, Container, UserTitle, Message } from "./style";
 
 export default function UserPage() {
   const { token } = useContext(TokenContext);
@@ -61,6 +61,7 @@ const UserPosts = ({ token, user }) => {
   }
 
   const title = `${formatUserName(userData.name)} posts`;
+  const photo = userData.userPhoto;
 
   function toggleFollow() {
     const promise = getUserPosts(userId, token);
@@ -101,7 +102,10 @@ const UserPosts = ({ token, user }) => {
     return (
       <>
         <div className="name-container">
-          <h2>{title}</h2>
+          <UserTitle>
+            <img src={photo} alt="user's photo" />
+            <h2>{title}</h2>
+          </UserTitle>
           {parseInt(user.id) === parseInt(userId) ? (
             <></>
           ) : (
@@ -128,33 +132,35 @@ const UserPosts = ({ token, user }) => {
 
   return (
     <>
-      
-        <div className="name-container">
+      <div className="name-container">
+        <UserTitle>
+          <img src={photo} alt="user's photo" />
           <h2>{title}</h2>
-          {parseInt(user.id) === parseInt(userId) ? (
-            <></>
-          ) : (
-            <button
-              onClick={() => toggleFollow()}
-              className="follow"
-              disabled={follow === null ? true : false}
-              style={{
-                background: follow === true ? "#FFFFFF" : "#1877f2",
-                color: follow === false ? "#FFFFFF" : "#1877f2",
-              }}
-            >
-              {follow ? "Unfollow" : "Follow"}
-            </button>
-          )}
+        </UserTitle>
+        {parseInt(user.id) === parseInt(userId) ? (
+          <></>
+        ) : (
+          <button
+            onClick={() => toggleFollow()}
+            className="follow"
+            disabled={follow === null ? true : false}
+            style={{
+              background: follow === true ? "#FFFFFF" : "#1877f2",
+              color: follow === false ? "#FFFFFF" : "#1877f2",
+            }}
+          >
+            {follow ? "Unfollow" : "Follow"}
+          </button>
+        )}
+      </div>
+      <section>
+        <div className="posts">
+          {userData.posts.map((post, index) => (
+            <Post post={post} key={index} />
+          ))}
         </div>
-        <section>
-          <div className="posts">
-            {userData.posts.map((post, index) => (
-              <Post post={post} key={index} />
-            ))}
-          </div>
-          <Trending />
-        </section>
+        <Trending />
+      </section>
     </>
   );
 };

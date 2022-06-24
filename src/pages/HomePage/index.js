@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { HiRefresh } from "react-icons/hi";
 
 import Header from "../../components/Header";
 import Post from "../../components/Post";
@@ -36,20 +37,15 @@ const HomePage = () => {
   );
 };
 
+let countOlderPosts;
+let countNewPosts;
 const RenderPosts = ({ token }) => {
   const [posts, setPosts] = useState();
   const [following, setFollowing] = useState();
+  const [newPosts, setNewPosts] = useState();
 
   useEffect(() => {
     (() => {
-      const postsResponse = getAllPosts(token);
-      postsResponse.then((res) => setPosts(res.data));
-      postsResponse.catch((e) =>
-        alert(
-          "An error occured while trying to fetch the posts, please refresh the page."
-        )
-      );
-
       const followingResponse = getAllFollowing(token);
       followingResponse.then((res) => setFollowing(res.data));
       followingResponse.catch((e) =>
@@ -58,6 +54,28 @@ const RenderPosts = ({ token }) => {
         )
       );
     })();
+  }, []);
+
+  useEffect(() => {
+    function getPosts() {
+      const postsResponse = getAllPosts(token);
+      postsResponse.then((res) => {
+        if (countOlderPosts && res.data.length > countOlderPosts) {
+          setNewPosts(res.data);
+          countNewPosts = res.data.length - countOlderPosts;
+        } else {
+          setPosts(res.data);
+          countOlderPosts = res.data.length;
+        }
+      });
+      postsResponse.catch((e) =>
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page."
+        )
+      );
+    }
+    getPosts();
+    setInterval(getPosts, 15000);
   }, []);
 
   if (!posts || !following) return <Message>Loading...</Message>;
@@ -69,7 +87,20 @@ const RenderPosts = ({ token }) => {
 
   if (!posts.length) return <Message>No posts found from your friends</Message>;
 
-  return posts.map((post, index) => <Post post={post} key={index} />);
+  return (
+    <>
+      {newPosts && posts && newPosts.length > posts.length ? (
+        <button onClick={() => setPosts(newPosts)} className="new-posts">
+          {newPosts.length - posts.length} new post(s), load more! <HiRefresh />
+        </button>
+      ) : (
+        <></>
+      )}
+      {posts.map((post, index) => (
+        <Post post={post} key={index} />
+      ))}
+    </>
+  );
 };
 
 const NewPost = ({ token, user }) => {

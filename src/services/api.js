@@ -69,8 +69,8 @@ export const getAllFollowing = async (token) => {
   });
 };
 
-export const getPostsByHashtag = async (word, token) => {
-  return api.get(`/hashtag/${word}`, {
+export const getPostsByHashtag = async (word, offset ,token) => {
+  return api.get(`/hashtag/${word}?offset=${offset}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

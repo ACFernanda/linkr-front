@@ -33,11 +33,15 @@ const UserPosts = ({ token, user }) => {
   const [hasMorePost, setHasMorePosts] = useState(true);
   const { id: userId } = useParams();
 
+  console.log(offset);
+
   useEffect(() => {
-    const promise = getUserPosts(userId, offset, token);
+    const promise = getUserPosts(userId, 0, token);
     promise.then((res) => {
       setUserData(res.data);
       setFollow(res.data.follow);
+      setOffset(0);
+      setHasMorePosts(true);
       if (res.data.posts.length < 10) {
         setHasMorePosts(false);
       }

@@ -45,9 +45,11 @@ const RenderPosts = ({ token }) => {
   const [hasMorePost, setHasMorePosts] = useState(true);
   useEffect(() => {
     (() => {
-      const postsResponse = getAllPosts(offset, token);
+      const postsResponse = getAllPosts(0, token);
       postsResponse.then((res) => {
-        setPosts(res.data)
+        setPosts(res.data);
+        setOffset(0);
+        setHasMorePosts(true);
         if(res.data.length < 10) {
           setHasMorePosts(false);
         }

@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { useState, useContext, useEffect, useRef } from "react";
 import ReactTooltip from "react-tooltip";
 import { dislikePost, editPost, likePost } from "../services/api";
+import { getTrandings } from "../services/api";
+
 import UserContext from "./../contexts/UserContext.js";
 import TokenContext from "../contexts/TokenContext";
 import Shared from './Shared'
@@ -12,9 +14,14 @@ import ShareModal from './ShareModal'
 import DeleteModal from "./DeleteModal";
 import Comments from './Comments';
 
+import TrendingContext from "../contexts/TrendingContext";
+
+
+
 export default function Post({ post }) {
   const { user } = useContext(UserContext);
   const { token } = useContext(TokenContext);
+  const { setTrendingList } = useContext(TrendingContext);
 
   const inputRef = useRef();
   const [editing, setEditing] = useState(false);
@@ -101,6 +108,7 @@ export default function Post({ post }) {
       setEditing(false);
       setInputDisabled(false);
       defineDescriptionList(input);
+      searchTrendings()
       //window.location.reload();
     } catch (e) {
       console.log(e);
@@ -109,6 +117,11 @@ export default function Post({ post }) {
       setTimeout(() => setError(''), 4000);
     }
   };
+
+  async function searchTrendings(){
+    const response = await getTrandings(token);
+    setTrendingList(response.data);
+  }
 
   useEffect(() => {
     if (editing) {

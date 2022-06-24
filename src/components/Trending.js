@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getTrandings } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
+
 export default function Trending() {
   const { token } = useContext(TokenContext);
   const [trendingList, setTrendingList] = useState([]);
+  
+  const location = useLocation();
+  
   function renderTrendings(item) {
     return (
       <div key={item.name}>
@@ -20,7 +24,8 @@ export default function Trending() {
       const response = await getTrandings(token);
       setTrendingList(response.data);
     })();
-  }, []);
+  }, [location.pathname]);
+
   return (
     <Container>
       <h3>trending</h3>

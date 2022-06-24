@@ -15,7 +15,6 @@ export default function HashtagPage() {
 
   async function renderPosts(word) {
     const response = await getPostsByHashtag(word, token);
-    console.log(response);
     setPosts(response.data);
     setSearchedWord(word);
   }

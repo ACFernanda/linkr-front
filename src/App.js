@@ -9,14 +9,16 @@ import UserPage from "./pages/UserPage";
 
 import UserContext from "./contexts/UserContext.js";
 import TokenContext from "./contexts/TokenContext.js";
+import TrendingContext from "./contexts/TrendingContext";
 
 const App = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
-
+  const [trendingList, setTrendingList] = useState([]);
   return (
     <TokenContext.Provider value={{ token, setToken }}>
       <UserContext.Provider value={{ user, setUser }}>
+      <TrendingContext.Provider value={{ trendingList, setTrendingList }}>
         <Router>
           <Routes>
             <Route path="/" element={<LoginPage />} />
@@ -27,6 +29,7 @@ const App = () => {
           </Routes>
           <GlobalStyle />
         </Router>
+        </TrendingContext.Provider>
       </UserContext.Provider>
     </TokenContext.Provider>
   );

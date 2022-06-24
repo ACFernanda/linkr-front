@@ -3,11 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getTrandings } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
+import TrendingContext from "../contexts/TrendingContext";
 
 export default function Trending() {
   const { token } = useContext(TokenContext);
-  const [trendingList, setTrendingList] = useState([]);
-  
+  const { trendingList,setTrendingList } = useContext(TrendingContext);
   const location = useLocation();
   
   function renderTrendings(item) {
@@ -19,11 +19,14 @@ export default function Trending() {
       </div>
     );
   }
+
+  async function searchTrendings(){
+    const response = await getTrandings(token);
+    setTrendingList(response.data);
+  }
+
   useEffect(() => {
-    (async () => {
-      const response = await getTrandings(token);
-      setTrendingList(response.data);
-    })();
+    searchTrendings()
   }, [location.pathname]);
 
   return (

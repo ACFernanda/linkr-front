@@ -322,6 +322,8 @@ const PictureContainer = styled.div`
   img {
     height: 50px;
     border-radius: 50%;
+    max-width: 50px;
+    object-fit:cover;
   }
   button {
     margin-top: 12px;

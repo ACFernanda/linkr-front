@@ -95,6 +95,10 @@ export default function Post({ post }) {
   }
 
   const eventHandler = (e) => {
+    if (e.key === "Enter") {
+      console.log('input após o enter:', input);
+      prepareToEdit();
+    }
     if (e.key === "Escape") { setEditing(false); }
   }
 
@@ -124,8 +128,7 @@ export default function Post({ post }) {
     defineDescriptionList(post.description);
   }, [post]);
 
-  function likeAndDislike(event) {
-    event.preventDefault()
+  function likeAndDislike() {
     if (like === true) {
       dislikePost({ postId: post.postId }, token);
       setCountLikes(Number(countLikes) - 1);
@@ -217,7 +220,7 @@ export default function Post({ post }) {
               </Link>
               <span>
                 {owner ?
-                  <button onClick={() =>  setEditing(!editing) }>
+                  <button onClick={() => { if (editing) { prepareToEdit() } setEditing(!editing) }}>
                     <AiFillEdit />
                   </button>
                   : <></>}
@@ -230,14 +233,12 @@ export default function Post({ post }) {
             </FirstLine>
 
             {editing ?
-              <form onSubmit={prepareToEdit}>
-                <input
-                  ref={inputRef}
-                  value={input}
-                  onChange={e => { setInput(e.target.value); console.log(input) }}
-                  disabled={inputDisabled ? true : false}>
-                </input>
-              </form>
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={e => { setInput(e.target.value); console.log(input) }}
+                disabled={inputDisabled ? true : false}>
+              </input>
               :
               <p className="description">{descriptionList.map(readHashtags)}</p>
             }

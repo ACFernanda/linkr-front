@@ -89,7 +89,9 @@ const Container = styled.div`
     }
     img {
       height: 40px;
+      max-width: 40px;
       border-radius: 50%;
+      object-fit: cover;
     }
   }
 `;

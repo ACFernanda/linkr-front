@@ -71,7 +71,9 @@ const NewPostContainer = styled.div`
 const PictureContainer = styled.div`
   img {
     height: 50px;
+    max-width: 50px;
     border-radius: 50%;
+    object-fit: cover;
   }
 
   @media (max-width: 613px) {

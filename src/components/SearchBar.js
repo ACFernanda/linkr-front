@@ -151,9 +151,10 @@ const User = styled.div`
   cursor: pointer;
 
   img {
-    width: 39px;
     height: 39px;
+    max-width: 39px;
     border-radius: 50%;
+    object-fit: cover;
     margin-left: 17px;
   }
 

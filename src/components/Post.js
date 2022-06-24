@@ -201,7 +201,7 @@ export default function Post({ post }) {
               </Link>
               <span>
                 {owner ?
-                  <button onClick={() => { if (editing) { prepareToEdit() } setEditing(!editing) }}>
+                  <button onClick={() => { setEditing(!editing) }}>
                     <AiFillEdit />
                   </button>
                   : <></>}

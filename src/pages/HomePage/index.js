@@ -88,8 +88,7 @@ const NewPost = ({ token, user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-
+    
     isLoading.placeholder = "Publishing...";
     isLoading.disabled = true;
     setIsLoading({ ...isLoading });

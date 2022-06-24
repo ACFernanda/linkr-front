@@ -89,21 +89,14 @@ export default function Post({ post }) {
     setDescriptionList(newList);
   }
 
-  const eventHandler = (e) => {
-    if (e.key === "Enter") {
-      console.log('input após o enter:', input);
-      prepareToEdit();
-    }
-    if (e.key === "Escape") { setEditing(false); }
-  }
-
   async function prepareToEdit() {
     try {
       setInputDisabled(true);
       await editPost(post.postId, { description: input }, token);
       setEditing(false);
       setInputDisabled(false);
-      window.location.reload();
+      defineDescriptionList(input);
+      //window.location.reload();
     } catch (e) {
       console.log(e);
       setInputDisabled(false);
@@ -115,9 +108,21 @@ export default function Post({ post }) {
   useEffect(() => {
     if (editing) {
       inputRef.current.focus();
-      document.addEventListener('keydown', eventHandler);
-    } else { document.removeEventListener('keydown', eventHandler); }
+    } else {
+      setInput(post.description);
+    }
   }, [editing]);
+
+  function inputHandler(event) {
+    const key = event.code;
+    if (key === "Enter") {
+      console.log('input após o enter:', input);
+      prepareToEdit();
+    }
+    else if (key === "Escape") {
+      setEditing(false);
+    }
+  }
 
   useEffect(() => {
     defineDescriptionList(post.description);
@@ -218,6 +223,7 @@ export default function Post({ post }) {
                 ref={inputRef}
                 value={input}
                 onChange={e => { setInput(e.target.value); console.log(input) }}
+                onKeyDown={inputHandler}
                 disabled={inputDisabled ? true : false}>
               </input>
               :
@@ -355,6 +361,10 @@ const ContentContainer = styled.div`
     height: 44px;
     border-radius:10px;
     margin-bottom:12px;
+
+    :disabled {
+      background-color: lightgray;
+    }
   }
 `;
 

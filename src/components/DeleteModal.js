@@ -1,20 +1,28 @@
 import styled from "styled-components";
 import { deletePost } from "../services/api";
 import TokenContext from "../contexts/TokenContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 export default function DeleteModal({ postId, setDeleting, setError }) {
     const { token } = useContext(TokenContext);
+    const [loading,setLoading]=useState(false)
     return (
         <Overlay>
+            {loading?
+            <Content>
+                <h1>Loading...</h1>
+            </Content>
+            :
             <Content>
                 <h1>Are you sure you want to delete this post?</h1>
                 <div>
                     <ButtonNo onClick={()=>setDeleting(false)}><p>No, go back</p></ButtonNo>
                     <ButtonYes onClick={async()=>{
                         try{
+                            setLoading(true)
                             await deletePost(postId,token)
                             setDeleting(false)
+                            setLoading(false)
                             window.location.reload();
                         }catch(e){
                             setError('It was not possible to delete the post')
@@ -24,7 +32,8 @@ export default function DeleteModal({ postId, setDeleting, setError }) {
                         }
                     }}><p>Yes, delete it</p></ButtonYes>
                 </div>
-            </Content>
+            </Content>}
+
         </Overlay>
     )
 }

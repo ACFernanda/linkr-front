@@ -131,6 +131,7 @@ const RightSide = styled.section`
     @media (max-width: 613px) {
       height: calc(100vh - 175px);
       width: 100vw;
+      min-height: fit-content;
     }
   }
   form {

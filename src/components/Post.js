@@ -118,7 +118,7 @@ export default function Post({ post }) {
     }
   };
 
-  async function searchTrendings(){
+  async function searchTrendings() {
     const response = await getTrandings(token);
     setTrendingList(response.data);
   }
@@ -186,12 +186,12 @@ export default function Post({ post }) {
 
   return (
     <>
-      {sharing?
-      <ShareModal postId={post.postId} setSharing={setSharing} setError={setError} />
-      :<></>}
+      {sharing ?
+        <ShareModal postId={post.postId} setSharing={setSharing} setError={setError} />
+        : <></>}
       {post.reposterId ?
-      <Shared reposterId={post.reposterId} reposterName={post.reposterName} /> 
-      : <></>}
+        <Shared reposterId={post.reposterId} reposterName={post.reposterName} />
+        : <></>}
       <PostContainer key={post.postId}>
         <IconContext.Provider value={{ className: "react-icons" }}>
           {deleting ? <DeleteModal setError={setError} postId={post.postId} setDeleting={setDeleting} /> : <></>}
@@ -313,6 +313,7 @@ const PostContainer = styled.div`
   position:relative;
   padding: 12px;
   width: 100%;
+  max-width: 612px;
   background-color: #171717;
   border-radius: 16px;
   display: flex;
@@ -325,6 +326,9 @@ const PostContainer = styled.div`
 
   .react-icons {
     cursor: pointer;
+    @media (max-width: 613px) {
+      font-size: 18px;
+    }
   };
 `;
 
@@ -337,6 +341,10 @@ const PictureContainer = styled.div`
     border-radius: 50%;
     max-width: 50px;
     object-fit:cover;
+    @media (max-width: 613px) {
+      height: 40px;
+      width: 40px;
+    }
   }
   button {
     margin-top: 12px;
@@ -355,6 +363,13 @@ const PictureContainer = styled.div`
     text-align: center;
     width: max-content;
     text-align: center;
+    
+    @media (max-width: 613px) {
+      font-weight: 400;
+      font-size: 9px;
+      line-height: 11px;
+    }
+    
   }
 `;
 

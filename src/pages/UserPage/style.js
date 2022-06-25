@@ -14,7 +14,7 @@ const Container = styled.div`
 const Main = styled.div`
   color: #ffffff;
   height: 100%;
-  width: 50%;
+  width:fit-content;
   display: flex;
   flex-direction: column;
 
@@ -38,6 +38,18 @@ const Main = styled.div`
 
   section {
     display: flex;
+    flex-direction: row;
+
+    .posts {
+      width: 100%;
+      max-width: 611px;
+    }
+    
+    @media (max-width: 613px) {
+      .posts {
+        width: 100%;
+      }
+    }
   }
 
   @media (max-width: 613px) {
@@ -67,7 +79,6 @@ const UserTitle = styled.div`
     h2 {
       margin-left: 12px;
       font-size: 33px;
-      margin-bottom: 20px;
     }
   }
 `;

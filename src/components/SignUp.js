@@ -148,6 +148,7 @@ const RightSide = styled.section`
 
     @media (max-width: 613px) {
       height: calc(100vh - 175px);
+      min-height: fit-content;
       width: 100vw;
     }
   }

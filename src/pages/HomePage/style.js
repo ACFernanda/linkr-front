@@ -4,7 +4,7 @@ const Container = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: fit-content;
   background-color: #333333;
   padding-top: 3%;
 
@@ -35,6 +35,7 @@ const Main = styled.div`
   color: #ffffff;
   height: 100%;
   width: 100%;
+  max-width: 615px;
 
   .new-posts {
     color: #ffffff;

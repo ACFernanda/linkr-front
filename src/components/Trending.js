@@ -38,7 +38,8 @@ export default function Trending() {
   );
 }
 const Container = styled.div`
-  width: 700px;
+  width: 300px;
+  min-width: fit-content;
   height: 406px;
   color: white;
   margin: 10px 0 0 18px;
